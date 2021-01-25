@@ -21,7 +21,7 @@ $(OUT): $(C_OBJ) $(ASM_OBJ)
 %.o: %.s
 	nasm -f elf32 $< -o $@
 
-# .PHONY: clean
+.PHONY: clean
 
 clean:
 	rm -f $(OUT) $(C_OBJ) $(ASM_OBJ) $(C_DEPS)

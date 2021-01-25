@@ -3,7 +3,7 @@ ISO_NAME=fenetre.iso
 ISO_FOLDER=ISO/
 ISO_PATH=$(ISO_FOLDER)$(ISO_NAME)
 
-run: $(ISO_PATH)
+run: $(ISO_PATH) kernel
 	$(QEMU) -cdrom $(ISO_PATH)
 
 run_shell:
@@ -15,7 +15,7 @@ $(ISO_PATH):
 kernel:
 	$(MAKE) -C kernel
 
-# .PHONY: kernel
+.PHONY: kernel clean
 
 clean:
 	$(MAKE) clean -C kernel
