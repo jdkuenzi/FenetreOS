@@ -1,5 +1,7 @@
 global entrypoint  ; the entry point symbol defined in kernel.ld
 
+extern entry
+
 ; Values for the multiboot header
 MULTIBOOT_MAGIC        equ 0x1BADB002  ; multiboot magic value
 MULTIBOOT_ALIGN        equ 1   ; load kernel and modules on page boundary
@@ -29,8 +31,11 @@ entrypoint:
 
 		; TODO:
 		; - Initialize the stack pointer and EBP (both to the same value)
+		mov esp, stack_space
+		mov ebp, stack_space
 		; - Pass the multiboot info to the kernel entry point function
 		; - Call the kernel entry point function (C code)
+		call entry
 
 
 ; should never return from kernel main fonction
@@ -45,3 +50,5 @@ section .stack nobits
 
 ; TODO:
 ; - Reserve a stack area (1MB minimum) for the kernel
+resb 1048576
+stack_space:
