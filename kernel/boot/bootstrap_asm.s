@@ -25,7 +25,6 @@ dd MULTIBOOT_FLAGS
 dd MULTIBOOT_CHECKSUM
 
 entrypoint:
-
 		; Bootloader code starts executing here
 		cli  ; disable hardware interruptions
 
@@ -34,9 +33,14 @@ entrypoint:
 		mov esp, stack_space
 		mov ebp, stack_space
 		; - Pass the multiboot info to the kernel entry point function
+		push 0
+		popf
+		push eax
+		push ebx
 
 		; - Call the kernel entry point function (C code)
 		call entry
+		add esp, 8
 
 
 ; should never return from kernel main fonction
