@@ -1,6 +1,6 @@
 QEMU=qemu-system-i386 -enable-kvm -m 64 -monitor stdio
 BUILD_STRUCTURE=build/boot/grub build/dat
-KERNEL_FOLDER=build/boot/kernel.elf
+KERNEL_FOLDER=build/
 GRUB_CFG_SRC=grub/grub.cfg
 GRUB_CFG_DST=build/boot/grub/
 ISO_NAME=fenetre.iso
