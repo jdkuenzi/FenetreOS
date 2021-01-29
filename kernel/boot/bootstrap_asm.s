@@ -34,6 +34,7 @@ entrypoint:
 		mov esp, stack_space
 		mov ebp, stack_space
 		; - Pass the multiboot info to the kernel entry point function
+
 		; - Call the kernel entry point function (C code)
 		call entry
 
@@ -50,5 +51,5 @@ section .stack nobits
 
 ; TODO:
 ; - Reserve a stack area (1MB minimum) for the kernel
-resb 1048576
 stack_space:
+	resb 1048576

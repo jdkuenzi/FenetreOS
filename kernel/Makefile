@@ -1,7 +1,7 @@
 include ../common.mk
 
 LD_FLAGS=-T kernel.ld -lgcc
-OUT=kernelExec
+OUT=../build/boot/kernel.elf
 # CC_FLAGS=
 
 C_SRC:=$(wildcard *.c)
@@ -24,6 +24,6 @@ $(OUT): $(C_OBJ) $(ASM_OBJ)
 .PHONY: clean
 
 clean:
-	rm -f $(OUT) $(C_OBJ) $(ASM_OBJ) $(C_DEPS)
+	rm -rf $(OUT) $(C_OBJ) $(ASM_OBJ) $(C_DEPS)
 
 -include $(C_DEPS)
