@@ -4,8 +4,8 @@ LD_FLAGS=-T kernel.ld -lgcc
 OUT=../build/boot/kernel.elf
 # CC_FLAGS=
 
-C_SRC:=$(wildcard *.c)
-C_HEADERS:=$(wildcard *.h)
+C_SRC:=$(shell find . -name "*.c")
+C_HEADERS:=$(shell find . -name "*.h")
 C_OBJ:=$(C_SRC:.c=.o)
 C_DEPS:=$(C_OBJ:.o=.d)
 
