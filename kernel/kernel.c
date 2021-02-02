@@ -18,7 +18,6 @@ void clean_vga(char *vidptr) {
 }
 
 void write_string(char *vidptr, char *str) {
-
 	int j = 0;
 	while(*str) {
 		vidptr[j] = *str;
@@ -44,12 +43,10 @@ void entry(void)
 }
 
 void *memset(void *dst, int value, uint_t count) {
-	unsigned char* d = dst;
-	while (count > 0)
+	char *d = dst;
+	while (count--)
 	{
-		*d = value;
-		d++;
-		count--;
+		*d++ = value;
 	}
 	return dst;
 }
@@ -57,62 +54,55 @@ void *memset(void *dst, int value, uint_t count) {
 void *memcpy(void *dst, void *src, uint_t count) {
 	char *copySrc = src;
 	char *copyDst = dst;
-	while (count > 0)
+	while (count--)
 	{
-		copyDst[count] = copySrc[count];
-		count--;
+		*copyDst++ = *copySrc++;
 	}
-	return copyDst;
+	return dst;
 }
 
 char *strncpy(char *dest, const char *src, uint_t count) {
-    if (dest == NULL) {
-        return NULL;
-	}
- 
-    char* ptr = dest;
-    while (*src && (count < 0))
-    {
-        *dest = *src;
-        dest++;
-        src++;
+	char *tmp = dest;
+	while (count) {
+		if ((*tmp = *src) != 0)
+			src++;
+		tmp++;
 		count--;
-    }
-
-    *dest = '\0';
- 
-    return ptr;
+	}
+	return dest;
 }
 
 int strcmp(const char *p, const char *q) {
-	while (*p)
-	{
-		if (*p != *q)
-		{
+	unsigned char c1, c2;
+	while (1) {
+		c1 = *p++;
+		c2 = *q++;
+		if (c1 != c2)
+			return c1 < c2 ? -1 : 1;
+		if (!c1)
 			break;
-		}
-		p++;
-		q++;
 	}
-
-	// retourne la difference des caracteres ASCII
-	return *(const unsigned char*)p - *(const unsigned char*)q;
+	return 0;
 	
 }
 
-// TODO
 int strncmp(const char *p, const char *q, uint_t count) {
-	return NULL;
+	unsigned char c1, c2;
+	while (count) {
+		c1 = *p++;
+		c2 = *q++;
+		if (c1 != c2)
+			return c1 < c2 ? -1 : 1;
+		if (!c1)
+			break;
+		count--;
+	}
+	return 0;
 }
 
 int strlen(const char *s) {
-	int count = 0;
-
-    while(*s != '\0')
-    {
-        count++;
-        s++;
-    }
-
-    return count;
+	const char *sc;
+	for (sc = s; *sc != '\0'; ++sc)
+		/* nothing */;
+	return sc - s;
 }
