@@ -1,7 +1,7 @@
 QEMU=qemu-system-i386 -enable-kvm -m 64 -monitor stdio
 BUILD_FOLDER=build/
 BUILD_STRUCTURE=$(BUILD_FOLDER)/boot/grub $(BUILD_FOLDER)/dat
-MODULE_SRC=res/
+MODULE_SRC=res/.
 MODULE_DST=build/dat/
 GRUB_CFG_SRC=grub/grub.cfg
 GRUB_CFG_DST=build/boot/grub/
