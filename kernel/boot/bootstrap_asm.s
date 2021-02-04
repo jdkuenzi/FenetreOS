@@ -26,16 +26,14 @@ dd MULTIBOOT_CHECKSUM
 
 entrypoint:
 		; Bootloader code starts executing here
-		cli  ; disable hardware interruptions
+		cli ; disable hardware interruptions
 
 		; TODO:
 		; - Initialize the stack pointer and EBP (both to the same value)
 		mov esp, stack_space
-		mov ebp, stack_space
+		add esp, 1048576
+		mov ebp, esp
 		; - Pass the multiboot info to the kernel entry point function
-		push 0
-		popf
-		push eax
 		push ebx
 
 		; - Call the kernel entry point function (C code)
@@ -55,5 +53,4 @@ section .stack nobits
 
 ; TODO:
 ; - Reserve a stack area (1MB minimum) for the kernel
-stack_space:
-	resb 1048576
+stack_space: resb 1048576

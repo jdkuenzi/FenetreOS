@@ -122,7 +122,6 @@ uint16_t get_cursor(void) {
 	return pos;
 }
 
-
 uint16_t get_cursor_from_x_y(uint16_t x, uint16_t y) {
 	uint16_t pos = (y * COLONNES + x) % (COLONNES * LIGNES);
 	return pos;
@@ -138,7 +137,6 @@ void set_cursor_from_x_y(uint16_t x, uint16_t y) {
 	uint16_t pos = get_cursor_from_x_y(x, y);
 	set_cursor_from_pos(pos);
 }
-
 
 void set_font_background_color(vga_t *vga, uint8_t fc, uint8_t bc) {
 	vga->font_color = fc;
@@ -168,17 +166,6 @@ void clean_vga(vga_t *vga) {
 	}
 }
 
-void write_string(vga_t *vga, const char *str) {
-	// uint16_t pos = get_cursor();
-	// while(*str) {
-	// 	write_to_pos(vga, pos, *str);
-	// 	str++;
-	// 	pos++;
-	// }
-	// set_cursor_from_pos(pos);
-	my_printf(vga, str);
-}
-
 void init_vga(vga_t *vga, uint8_t fc, uint8_t bc) {
 	init_vga_struct(vga, fc, bc);
 	disable_cursor();
@@ -188,23 +175,17 @@ void init_vga(vga_t *vga, uint8_t fc, uint8_t bc) {
 	set_cursor_from_pos(0);
 }
 
-void printChar(vga_t *vga, uint8_t c) {
+void printChar(vga_t *vga, char c) {
 	uint16_t x;
 	uint16_t y;
 	set_x_y_from_cursor(&x, &y);
 
-	if (c == '\t')		// Tab
-	{
+	if (c == '\t') { // Tab
 		x += 4;
-	} else if (c == '\n')	// Return
-	{
+	} else if (c == '\n') {	// Return
 		x = 0;
 		y++;
-	} else if (c == 0x80)	// Backspace
-	{
-		x--;
-	} else if (c >= ' ')
-	{
+	} else if (c >= ' ') {
 		write_to_x_y(vga, x, y, c);
 		x++;
 	}
@@ -225,80 +206,81 @@ void swap(char *x, char *y) {
 }
 
 // Inversion d'un buffer
-char* reverseBuffer(char *buffer, int i, int j)
+void reverseBuffer(char *buffer)
 {
+	int i = 0;
+	int j = strlen(buffer) - 1;
     while (i < j) {
+		swap(&buffer[i], &buffer[j]);
 		i++;
 		j--;
-        swap(&buffer[i], &buffer[j]);
 	}
-    return buffer;
 }
 
-void my_printf(vga_t *vga, char * fmt, ...) {
-	char **args = (char**) &fmt;
-	int c;
-	char buffer[50];
+void convert(unsigned int num, int base, char *buffer) { 
+	static char representation[]= "0123456789ABCDEF";
+	int i = 0;
+	do 
+	{ 
+		num /= base;
+		buffer[i] = representation[num%base];
+		i++;
+	} while (num);
 
-	while ((c = *fmt) != 0)
-	{
-		if (c != '%')
-		{
-			printChar(vga, c);
-			*fmt++;
-		} else 
-		{
-			char *p;
-			c = *fmt++;
-			switch (c)
-			{
-			case 'c':
-				/* code */
-				break;
-			case 's': {
-				p = *args++;
-				while (*p != NULL)
-				{
-					printChar(vga, *p);
-					*p++;
-				}
-				
-				break;
-			}
-			case 'd':
-				/* code */
-				break;
-			case 'x': {
-				int n = *((int *) args++);
-				int i = 0;
-				while (n)
-				{
-					int res = n % 16;		// Base 16 -> HEX
-					if (res >= 10) 
-						buffer[i++] = 'a' + (res - 10);
-					else
-						buffer[i++] = '0' + res;
-					n = n / 16;
-				}
-				if (i == 0)
-        			buffer[i++] = '0';
-				buffer[i] = '\0';
-				char *newBuff = reverseBuffer(buffer, 0, i - 1);
-				while (*newBuff != NULL)
-				{
-					printChar(vga, *newBuff);
-					*newBuff++;
-				}
-				break;
-			}
-			
-			default:
-				break;
-			}
-		}
-		
-	}
+	// reverseBuffer(buffer);
+	buffer[i] = '\0';
+}	
 	
+
+void my_printf(vga_t *vga, const char *fmt, ...) {
+	int *args = (int*)&fmt;
+
+	while (*fmt) {
+		if (*fmt == '%') {
+			// int *ptr;
+			fmt++;
+			args++;
+			switch (*fmt) {
+				case 'c': {
+					/* code */
+					break;
+				}
+				case 's': {
+					my_printf(vga, (char*)*args);
+					break;
+				}
+				case 'd': {
+					char buffer[50];
+					int n = (int)*args;
+
+					if (n < 0) {
+						n = -n;
+						printChar(vga, '-');
+					}
+
+					convert(n, 10, buffer);
+					my_printf(vga, buffer);
+					
+					break;
+				}
+				case 'x': {
+					char buffer[50];
+					unsigned int n = (unsigned int)*args;
+
+					convert(n, 16, buffer);
+					my_printf(vga, "0x%s", buffer);
+
+					break;
+				}
+				default: {
+					break;
+				}
+			}
+		} else {
+			printChar(vga, *fmt);
+		}
+		fmt++;
+	}
 }
 
 void entry(multiboot_info_t* info)
@@ -313,6 +295,11 @@ void entry(multiboot_info_t* info)
 	my_printf(&vga, "\n\n");
 	my_printf(&vga, "Test 180		j'ai fait 2 tab !\n");
 	my_printf(&vga, "	\nTest 190");
-	my_printf(&vga, "\n\n\n\n %s", "0xFAFA");
+	my_printf(&vga, "\n%s -> %s", "0xFAFA", "64250");
+	my_printf(&vga, "\n%d", 10);
+	my_printf(&vga, "\n%d", -10);
+	my_printf(&vga, "\n%x = %d", 0xFAFA, 0xFAFA);
+	my_printf(&vga, "\n%x", 64250);
+	my_printf(&vga, "\n%d", 0xFAFA);
 	return;
 }
