@@ -5,16 +5,12 @@
 #define COLONNES 80
 #define LIGNES 25
 #define VGA 0xB8000
-
-int cursor_x = 10;
-int cursor_y = 10;
-
-uint16_t *screen;
 #define CMD_REGISTER 0x3D4
 #define DATA_REGISTER 0x3D5
 
 typedef struct vga
 {
+	char *vidptr;
 	uint8_t font_color;
 	uint8_t background_color;
 } vga_t;
@@ -24,120 +20,6 @@ extern void ld_kernel_start();
 extern void ld_kernel_end();
 uint_t kernel_start = (uint_t)&ld_kernel_start;
 uint_t kernel_end = (uint_t)&ld_kernel_end;
-
-void printChar(uint8_t c) {
-
-	uint16_t *addr;
-
-	if (c == '\t')		// Tab
-	{
-		cursor_x += 4;
-	} else if (c == '\n')	// Return
-	{
-		cursor_x = 0;
-		cursor_y++;
-	} else if (c == 0x80)	// Backspace
-	{
-		cursor_x--;
-	} else if (c >= ' ')
-	{
-		char *vidptr = (char*)VGA;
-		clean_vga(vidptr);
-		write_string(vidptr, "JE SUIS");
-		addr = screen + (cursor_y * COLONNES + cursor_x);
-		//*addr = (0xF0<<8) | c;
-		cursor_x++;
-	}
-	
-	if (cursor_x >= COLONNES)	// Fin de ligne
-	{
-		cursor_x = 0;
-		cursor_y++;
-	}
-}
-
-// Permutation de deux valeurs
-void swap(char *x, char *y) {
-	char tmp = *x;
-	*x = *y;
-	*y = tmp;
-}
-
-// Inversion d'un buffer
-char* reverseBuffer(char *buffer, int i, int j)
-{
-    while (i < j) {
-		i++;
-		j--;
-        swap(&buffer[i], &buffer[j]);
-	}
-    return buffer;
-}
-
-void my_printf(char * fmt, ...) {
-	char **args = (char**) &fmt;
-	int c;
-	char buffer[50];
-
-	while ((c = *fmt++) != 0)
-	{
-		if (c != '%')
-		{
-			printChar(c);
-		} else 
-		{
-			char *p;
-			c = *fmt++;
-			switch (c)
-			{
-			case 'c':
-				/* code */
-				break;
-			case 's': {
-				p = *args++;
-				while (*p != NULL)
-				{
-					printChar(*p);
-					*p++;
-				}
-				
-				break;
-			}
-			case 'd':
-				/* code */
-				break;
-			case 'x': {
-				int n = *((int *) args++);
-				int i = 0;
-				while (n)
-				{
-					int res = n % 16;		// Base 16 -> HEX
-					if (res >= 10) 
-						buffer[i++] = 'a' + (res - 10);
-					else
-						buffer[i++] = '0' + res;
-					n = n / 16;
-				}
-				if (i == 0)
-        			buffer[i++] = '0';
-				buffer[i] = '\0';
-				char *newBuff = reverseBuffer(buffer, 0, i - 1);
-				while (*newBuff != NULL)
-				{
-					printChar(*newBuff);
-					*newBuff++;
-				}
-				break;
-			}
-			
-			default:
-				break;
-			}
-		}
-		
-	}
-	
-}
 
 // Ref : Ce code source vient de la librairie string.c (https://code.woboq.org/linux/linux/lib/string.c.html)
 // +------------------------------------------------------------+
@@ -234,7 +116,8 @@ void set_cursor(uint16_t pos) {
 
 uint16_t get_cursor(void) {
 	outb(CMD_REGISTER, 0xE); 
-	uint16_t pos = (inb(DATA_REGISTER) << 8) | pos; 
+	uint16_t pos = 0;
+	pos = (inb(DATA_REGISTER) << 8) | pos; 
 	outb(CMD_REGISTER, 0xF); 
 	pos = inb(DATA_REGISTER) | pos;
 	return pos;
@@ -245,55 +128,169 @@ void set_cursor_x_y(uint16_t x, uint16_t y) {
 	set_cursor(pos);
 }
 
+void clean_vga(vga_t *vga) {
+	int i = 0;
+	while(i < COLONNES * LIGNES * 2) {
+		vga->vidptr[i] = ' ';
+		vga->vidptr[i+1] = (vga->background_color << 4) | vga->font_color; 		
+		i += 2;
+	}
+}
+
 void set_font_background_color(vga_t *vga, uint8_t fc, uint8_t bc) {
 	vga->font_color = fc;
 	vga->background_color = bc;
 }
 
-vga_t *init_vga_struct(uint8_t fc, uint8_t bc) {
-	vga_t *vga = (vga_t*)memset(vga, 0, sizeof(vga_t));
+void init_vga_struct(vga_t *vga, char *vidptr, uint8_t fc, uint8_t bc) {
+	memset(vga, 0, sizeof(vga_t));
+	vga->vidptr = vidptr;
 	set_font_background_color(vga, fc, bc);
-	return vga;
 }
 
-vga_t *init_vga(uint8_t fc, uint8_t bc, char *vidptr) {
-	vga_t *vga = init_vga_struct(fc, bc);
+void init_vga(vga_t *vga, char *vidptr, uint8_t fc, uint8_t bc) {
+	init_vga_struct(vga, vidptr, fc, bc);
 	disable_cursor();
 	init_rec_cursor();
 	enable_cursor();
-	clean_vga(vga, vidptr);
+	clean_vga(vga);
 	set_cursor(0);
-	return vga;
 }
 
-void clean_vga(vga_t *vga, char *vidptr) {
-	int i = 0;
-	while(i < 80 * 25 * 2) {
-		vidptr[i] = ' ';
-		vidptr[i+1] = (vga->background_color << 4) | vga->font_color; 		
-		i += 2;
-	}
-}
-
-void write_string(vga_t *vga, char *vidptr, const char *str) {
+void write_string(vga_t *vga, const char *str) {
 	uint16_t pos = get_cursor();
 	while(*str) {
-		vidptr[pos] = *str;
-		vidptr[pos+1] = (vga->background_color << 4) | vga->font_color;
+		vga->vidptr[pos] = *str;
+		vga->vidptr[pos+1] = (vga->background_color << 4) | vga->font_color;
 		str++;
 		pos += 2;
 	}
 	set_cursor(pos);
 }
 
+void printChar(vga_t *vga, uint8_t c) {
+
+	int cursor_x = 10;
+	int cursor_y = 10;
+	char *addr;
+
+	if (c == '\t')		// Tab
+	{
+		cursor_x += 4;
+	} else if (c == '\n')	// Return
+	{
+		cursor_x = 0;
+		cursor_y++;
+	} else if (c == 0x80)	// Backspace
+	{
+		cursor_x--;
+	} else if (c >= ' ')
+	{
+		// clean_vga(vga);
+		write_string(vga, "JE SUIS");
+		addr = vga->vidptr + (cursor_y * COLONNES + cursor_x);
+		//*addr = (0xF0<<8) | c;
+		cursor_x++;
+	}
+	
+	if (cursor_x >= COLONNES)	// Fin de ligne
+	{
+		cursor_x = 0;
+		cursor_y++;
+	}
+}
+
+// Permutation de deux valeurs
+void swap(char *x, char *y) {
+	char tmp = *x;
+	*x = *y;
+	*y = tmp;
+}
+
+// Inversion d'un buffer
+char* reverseBuffer(char *buffer, int i, int j)
+{
+    while (i < j) {
+		i++;
+		j--;
+        swap(&buffer[i], &buffer[j]);
+	}
+    return buffer;
+}
+
+void my_printf(vga_t *vga, char * fmt, ...) {
+	char **args = (char**) &fmt;
+	int c;
+	char buffer[50];
+
+	while ((c = *fmt++) != 0)
+	{
+		if (c != '%')
+		{
+			printChar(vga, c);
+		} else 
+		{
+			char *p;
+			c = *fmt++;
+			switch (c)
+			{
+			case 'c':
+				/* code */
+				break;
+			case 's': {
+				p = *args++;
+				while (*p != NULL)
+				{
+					printChar(vga, *p);
+					*p++;
+				}
+				
+				break;
+			}
+			case 'd':
+				/* code */
+				break;
+			case 'x': {
+				int n = *((int *) args++);
+				int i = 0;
+				while (n)
+				{
+					int res = n % 16;		// Base 16 -> HEX
+					if (res >= 10) 
+						buffer[i++] = 'a' + (res - 10);
+					else
+						buffer[i++] = '0' + res;
+					n = n / 16;
+				}
+				if (i == 0)
+        			buffer[i++] = '0';
+				buffer[i] = '\0';
+				char *newBuff = reverseBuffer(buffer, 0, i - 1);
+				while (*newBuff != NULL)
+				{
+					printChar(vga, *newBuff);
+					*newBuff++;
+				}
+				break;
+			}
+			
+			default:
+				break;
+			}
+		}
+		
+	}
+	
+}
+
 void entry(multiboot_info_t* info)
 {
 	const char *str = "Je suis la fenetre :)";
 	const char *lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
-	char *vidptr = (char*)0xb8000;
-	vga_t *vga = init_vga(0x2, 0x0, vidptr);
-	write_string(vga, vidptr, str);
+	vga_t vga;
+	init_vga(&vga, (char*)VGA, 0x0, 0x2);
+	write_string(&vga, str);
 	set_cursor_x_y(0, 13);
-	write_string(vga, vidptr, lorem);
+	write_string(&vga, lorem);
 	return;
 }
