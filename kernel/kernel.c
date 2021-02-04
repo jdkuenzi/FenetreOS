@@ -10,7 +10,7 @@
 
 typedef struct vga
 {
-	char *vidptr;
+	uint16_t *vidptr;
 	uint8_t font_color;
 	uint8_t background_color;
 } vga_t;
@@ -122,8 +122,9 @@ uint16_t get_cursor(void) {
 	return pos;
 }
 
+
 uint16_t get_cursor_from_x_y(uint16_t x, uint16_t y) {
-	uint16_t pos = ((y * COLONNES + x) * 2) % (COLONNES * LIGNES * 2);
+	uint16_t pos = (y * COLONNES + x) % (COLONNES * LIGNES);
 	return pos;
 }
 
@@ -138,28 +139,48 @@ void set_cursor_from_x_y(uint16_t x, uint16_t y) {
 	set_cursor_from_pos(pos);
 }
 
-void clean_vga(vga_t *vga) {
-	int i = 0;
-	while(i < COLONNES * LIGNES * 2) {
-		vga->vidptr[i] = ' ';
-		vga->vidptr[i+1] = (vga->background_color << 4) | vga->font_color; 		
-		i += 2;
-	}
-}
 
 void set_font_background_color(vga_t *vga, uint8_t fc, uint8_t bc) {
 	vga->font_color = fc;
 	vga->background_color = bc;
 }
 
-void init_vga_struct(vga_t *vga, char *vidptr, uint8_t fc, uint8_t bc) {
+void init_vga_struct(vga_t *vga, uint8_t fc, uint8_t bc) {
 	memset(vga, 0, sizeof(vga_t));
-	vga->vidptr = vidptr;
+	vga->vidptr = (uint16_t*)VGA;
 	set_font_background_color(vga, fc, bc);
 }
 
-void init_vga(vga_t *vga, char *vidptr, uint8_t fc, uint8_t bc) {
-	init_vga_struct(vga, vidptr, fc, bc);
+void write_to_pos(vga_t *vga, uint16_t pos, char c) {
+	vga->vidptr[pos] =  (vga->background_color << 12) | (vga->font_color << 8) | c;
+}
+
+void write_to_x_y(vga_t *vga, uint16_t x, uint16_t y, char c) {
+	uint16_t pos = get_cursor_from_x_y(x, y);
+	write_to_pos(vga, pos, c);
+}
+
+void clean_vga(vga_t *vga) {
+	uint16_t pos = 0;
+	while(pos < COLONNES * LIGNES) {
+		write_to_pos(vga, pos, ' ');		
+		pos++;
+	}
+}
+
+void write_string(vga_t *vga, const char *str) {
+	// uint16_t pos = get_cursor();
+	// while(*str) {
+	// 	write_to_pos(vga, pos, *str);
+	// 	str++;
+	// 	pos++;
+	// }
+	// set_cursor_from_pos(pos);
+	my_printf(vga, str);
+}
+
+void init_vga(vga_t *vga, uint8_t fc, uint8_t bc) {
+	init_vga_struct(vga, fc, bc);
 	disable_cursor();
 	init_rec_cursor();
 	enable_cursor();
@@ -167,19 +188,7 @@ void init_vga(vga_t *vga, char *vidptr, uint8_t fc, uint8_t bc) {
 	set_cursor_from_pos(0);
 }
 
-void write_string(vga_t *vga, const char *str) {
-	uint16_t pos = get_cursor();
-	while(*str) {
-		vga->vidptr[pos] = *str;
-		vga->vidptr[pos+1] = (vga->background_color << 4) | vga->font_color;
-		str++;
-		pos += 2;
-	}
-	set_cursor_from_pos(pos);
-}
-
 void printChar(vga_t *vga, uint8_t c) {
-
 	uint16_t x;
 	uint16_t y;
 	set_x_y_from_cursor(&x, &y);
@@ -196,9 +205,7 @@ void printChar(vga_t *vga, uint8_t c) {
 		x--;
 	} else if (c >= ' ')
 	{
-		uint16_t pos = get_cursor_from_x_y(x, y);
-		vga->vidptr[pos] = c;
-		vga->vidptr[pos+1] = (vga->background_color << 4) | vga->font_color;
+		write_to_x_y(vga, x, y, c);
 		x++;
 	}
 
@@ -299,12 +306,13 @@ void entry(multiboot_info_t* info)
 	const char *str = "Je suis la fenetre :)";
 	const char *lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 	vga_t vga;
-	init_vga(&vga, (char*)VGA, 0x2, 0x0);
-	write_string(&vga, str);
-	set_cursor_from_x_y(10, 5);
-	write_string(&vga, lorem);
-	set_cursor_from_x_y(0, 13);
-	my_printf(&vga, "Test 180\n");
+	init_vga(&vga, 0x2, 0x0);
+	my_printf(&vga, str);
+	set_cursor_from_x_y(0, 2);
+	my_printf(&vga, lorem);
+	my_printf(&vga, "\n\n");
+	my_printf(&vga, "Test 180		j'ai fait 2 tab !\n");
 	my_printf(&vga, "	\nTest 190");
+	my_printf(&vga, "\n\n\n\n %s", "0xFAFA");
 	return;
 }
