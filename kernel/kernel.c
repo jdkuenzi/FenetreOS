@@ -235,70 +235,82 @@ char* reverseBuffer(char *buffer, int i, int j)
     return buffer;
 }
 
-void my_printf(vga_t *vga, char * fmt, ...) {
-	char **args = (char**) &fmt;
-	int c;
-	char buffer[50];
+void my_printf(vga_t *vga, const char *fmt, ...) {
+    char **args = (char**)&fmt;
+    char buffer[50];
 
-	while ((c = *fmt) != 0)
-	{
-		if (c != '%')
-		{
-			printChar(vga, c);
-			*fmt++;
-		} else 
-		{
-			char *p;
-			c = *fmt++;
-			switch (c)
-			{
-			case 'c':
-				/* code */
-				break;
-			case 's': {
-				p = *args++;
-				while (*p != NULL)
-				{
-					printChar(vga, *p);
-					*p++;
-				}
-				
-				break;
-			}
-			case 'd':
-				/* code */
-				break;
-			case 'x': {
-				int n = *((int *) args++);
-				int i = 0;
-				while (n)
-				{
-					int res = n % 16;		// Base 16 -> HEX
-					if (res >= 10) 
-						buffer[i++] = 'a' + (res - 10);
-					else
-						buffer[i++] = '0' + res;
-					n = n / 16;
-				}
-				if (i == 0)
-        			buffer[i++] = '0';
-				buffer[i] = '\0';
-				char *newBuff = reverseBuffer(buffer, 0, i - 1);
-				while (*newBuff != NULL)
-				{
-					printChar(vga, *newBuff);
-					*newBuff++;
-				}
-				break;
-			}
-			
-			default:
-				break;
-			}
-		}
-		
-	}
-	
+    while (*fmt) {
+        if (*fmt == '%') {
+            fmt++;
+            args++;
+            switch (*fmt) {
+                case 'c': {
+                    /* code */
+                    break;
+                }
+                case 's': {
+                    char *ptr = *((char**)args);
+                    while (*ptr)
+                    {
+                        printChar(vga, *ptr);
+                        ptr++;
+                    }
+                    break;
+                }
+                case 'd': {
+                    int n = *((int *) args++);
+                    int i = 0;
+                    while (n)
+                    {
+                        int res = n % 10;        // Base 10 -> DEC
+                        n = n / 10;
+                    }
+                    if (i == 0)
+                        buffer[i++] = '0';
+					if (n < 0)
+        				buffer[i++] = '-';
+                    buffer[i] = '\0';
+                    char *newBuff = reverseBuffer(buffer, 0, i - 1);
+                    while (*newBuff != NULL)
+                    {
+                        printChar(vga, *newBuff);
+                        *newBuff++;
+                    }
+                    break;
+                }
+                case 'x': {
+                    int n = *((int *) args++);
+                    int i = 0;
+                    while (n)
+                    {
+                        int res = n % 16;        // Base 16 -> HEX
+                        if (res >= 10) 
+                            buffer[i++] = 'a' + (res - 10);
+                        else
+                            buffer[i++] = '0' + res;
+                        n = n / 16;
+                    }
+                    if (i == 0)
+                        buffer[i++] = '0';
+                    buffer[i] = '\0';
+                    char *newBuff = reverseBuffer(buffer, 0, i - 1);
+                    while (*newBuff != NULL)
+                    {
+                        printChar(vga, *newBuff);
+                        *newBuff++;
+                    }
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+            fmt++;
+        } else {
+            printChar(vga, *fmt);
+            fmt++;
+        }
+    }
 }
 
 void entry(multiboot_info_t* info)
@@ -313,6 +325,7 @@ void entry(multiboot_info_t* info)
 	my_printf(&vga, "\n\n");
 	my_printf(&vga, "Test 180		j'ai fait 2 tab !\n");
 	my_printf(&vga, "	\nTest 190");
-	my_printf(&vga, "\n\n\n\n %s", "0xFAFA");
+	my_printf(&vga, "\n\n\n\n %x", 64250);
+	my_printf(&vga, "\n\n\n\n %d", -67);
 	return;
 }
