@@ -263,12 +263,15 @@ void my_printf(vga_t *vga, const char *fmt, ...) {
                     while (n)
                     {
                         int res = n % 10;        // Base 10 -> DEC
+						buffer[i++] = 48 + res;
                         n = n / 10;
                     }
-                    if (i == 0)
+                    if (i == 0) {
                         buffer[i++] = '0';
-					if (n < 0)
+					}
+					if (n < 0) {
         				buffer[i++] = '-';
+					}
                     buffer[i] = '\0';
                     char *newBuff = reverseBuffer(buffer, 0, i - 1);
                     while (*newBuff != NULL)
