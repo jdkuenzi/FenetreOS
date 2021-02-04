@@ -89,7 +89,6 @@ int strlen(const char *s) {
 }
 // +------------------------------------------------------------+
 
-
 void init_rec_cursor(void) {
 	outb(CMD_REGISTER, 0xA); // Write to command register 0xA
 	outb(DATA_REGISTER, 0x0); // Write to data register start value of cursor at 0
@@ -107,11 +106,11 @@ void disable_cursor(void) {
 	outb(DATA_REGISTER, 0x10);
 }
 
-void set_cursor(uint16_t pos) {
+void set_cursor_from_pos(uint16_t pos) {
 	outb(CMD_REGISTER, 0xE); 
-	outb(DATA_REGISTER, pos >> 8); 
+	outb(DATA_REGISTER, (uint8_t)(pos >> 8)); 
 	outb(CMD_REGISTER, 0xF); 
-	outb(DATA_REGISTER, pos & 0xff);
+	outb(DATA_REGISTER, (uint8_t)(pos & 0xff));
 }
 
 uint16_t get_cursor(void) {
@@ -123,9 +122,20 @@ uint16_t get_cursor(void) {
 	return pos;
 }
 
-void set_cursor_x_y(uint16_t x, uint16_t y) {
-	uint16_t pos = y * 80 + x % (80 * 25);
-	set_cursor(pos);
+uint16_t get_cursor_from_x_y(uint16_t x, uint16_t y) {
+	uint16_t pos = ((y * COLONNES + x) * 2) % (COLONNES * LIGNES * 2);
+	return pos;
+}
+
+void set_x_y_from_cursor(uint16_t *x, uint16_t *y) {
+	uint16_t pos = get_cursor();
+	*y = pos / COLONNES % LIGNES;
+	*x = (pos - (COLONNES * *y)) % COLONNES;
+}
+
+void set_cursor_from_x_y(uint16_t x, uint16_t y) {
+	uint16_t pos = get_cursor_from_x_y(x, y);
+	set_cursor_from_pos(pos);
 }
 
 void clean_vga(vga_t *vga) {
@@ -154,7 +164,7 @@ void init_vga(vga_t *vga, char *vidptr, uint8_t fc, uint8_t bc) {
 	init_rec_cursor();
 	enable_cursor();
 	clean_vga(vga);
-	set_cursor(0);
+	set_cursor_from_pos(0);
 }
 
 void write_string(vga_t *vga, const char *str) {
@@ -165,39 +175,39 @@ void write_string(vga_t *vga, const char *str) {
 		str++;
 		pos += 2;
 	}
-	set_cursor(pos);
+	set_cursor_from_pos(pos);
 }
 
 void printChar(vga_t *vga, uint8_t c) {
 
-	int cursor_x = 10;
-	int cursor_y = 10;
-	char *addr;
+	uint16_t x;
+	uint16_t y;
+	set_x_y_from_cursor(&x, &y);
 
 	if (c == '\t')		// Tab
 	{
-		cursor_x += 4;
+		x += 4;
 	} else if (c == '\n')	// Return
 	{
-		cursor_x = 0;
-		cursor_y++;
+		x = 0;
+		y++;
 	} else if (c == 0x80)	// Backspace
 	{
-		cursor_x--;
+		x--;
 	} else if (c >= ' ')
 	{
-		// clean_vga(vga);
-		write_string(vga, "JE SUIS");
-		addr = vga->vidptr + (cursor_y * COLONNES + cursor_x);
-		//*addr = (0xF0<<8) | c;
-		cursor_x++;
+		uint16_t pos = get_cursor_from_x_y(x, y);
+		vga->vidptr[pos] = c;
+		vga->vidptr[pos+1] = (vga->background_color << 4) | vga->font_color;
+		x++;
 	}
-	
-	if (cursor_x >= COLONNES)	// Fin de ligne
-	{
-		cursor_x = 0;
-		cursor_y++;
+
+	if (x >= COLONNES) {
+		y += x / COLONNES;
+		x = x % COLONNES;
 	}
+
+	set_cursor_from_x_y(x, y);
 }
 
 // Permutation de deux valeurs
@@ -223,11 +233,12 @@ void my_printf(vga_t *vga, char * fmt, ...) {
 	int c;
 	char buffer[50];
 
-	while ((c = *fmt++) != 0)
+	while ((c = *fmt) != 0)
 	{
 		if (c != '%')
 		{
 			printChar(vga, c);
+			*fmt++;
 		} else 
 		{
 			char *p;
@@ -288,9 +299,12 @@ void entry(multiboot_info_t* info)
 	const char *str = "Je suis la fenetre :)";
 	const char *lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 	vga_t vga;
-	init_vga(&vga, (char*)VGA, 0x0, 0x2);
+	init_vga(&vga, (char*)VGA, 0x2, 0x0);
 	write_string(&vga, str);
-	set_cursor_x_y(0, 13);
+	set_cursor_from_x_y(10, 5);
 	write_string(&vga, lorem);
+	set_cursor_from_x_y(0, 13);
+	my_printf(&vga, "Test 180\n");
+	my_printf(&vga, "	\nTest 190");
 	return;
 }
