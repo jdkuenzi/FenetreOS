@@ -272,6 +272,53 @@ void my_printf(vga_t *vga, const char *fmt, ...) {
 
 					break;
 				}
+				//                 case 'd': {
+                //     int n = *((int *) args++);
+                //     int i = 0;
+                //     while (n)
+                //     {
+                //         int res = n % 10;        // Base 10 -> DEC
+				// 		buffer[i++] = 48 + res;
+                //         n = n / 10;
+                //     }
+                //     if (i == 0) {
+                //         buffer[i++] = '0';
+				// 	}
+				// 	if (n < 0) {
+        		// 		buffer[i++] = '-';
+				// 	}
+                //     buffer[i] = '\0';
+                //     char *newBuff = reverseBuffer(buffer, 0, i - 1);
+                //     while (*newBuff != NULL)
+                //     {
+                //         printChar(vga, *newBuff);
+                //         *newBuff++;
+                //     }
+                //     break;
+                // }
+                // case 'x': {
+                //     int n = *((int *) args++);
+                //     int i = 0;
+                //     while (n)
+                //     {
+                //         int res = n % 16;        // Base 16 -> HEX
+                //         if (res >= 10) 
+                //             buffer[i++] = 'a' + (res - 10);
+                //         else
+                //             buffer[i++] = '0' + res;
+                //         n = n / 16;
+                //     }
+                //     if (i == 0)
+                //         buffer[i++] = '0';
+                //     buffer[i] = '\0';
+                //     char *newBuff = reverseBuffer(buffer, 0, i - 1);
+                //     while (*newBuff != NULL)
+                //     {
+                //         printChar(vga, *newBuff);
+                //         *newBuff++;
+                //     }
+                //     break;
+                // }
 				default: {
 					break;
 				}
@@ -298,7 +345,7 @@ void entry(multiboot_info_t* info)
 	my_printf(&vga, "\n%s -> %s", "0xFAFA", "64250");
 	my_printf(&vga, "\n%d", 10);
 	my_printf(&vga, "\n%d", -10);
-	my_printf(&vga, "\n%x = %d", 0xFAFA, 0xFAFA);
+	my_printf(&vga, "\n%x = %d", 0xBA, 0xBA);
 	my_printf(&vga, "\n%x", 64250);
 	my_printf(&vga, "\n%d", 0xFAFA);
 	return;

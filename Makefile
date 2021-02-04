@@ -10,7 +10,7 @@ ISO_FOLDER=ISO/
 ISO_PATH=$(ISO_FOLDER)$(ISO_NAME)
 
 run: kernel $(ISO_PATH)
-	$(QEMU) -cdrom $(ISO_PATH)
+	$(QEMU) -cdrom $(ISO_PATH) -m 105M
 
 run_shell: kernel
 	$(QEMU) -kernel ./kernel/kernelExec
