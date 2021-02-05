@@ -9,15 +9,12 @@ ISO_NAME=fenetre.iso
 ISO_FOLDER=ISO/
 ISO_PATH=$(ISO_FOLDER)$(ISO_NAME)
 
-run: kernel $(ISO_PATH)
-	$(QEMU) -cdrom $(ISO_PATH)
-
-run_shell: kernel
-	$(QEMU) -kernel ./build/boot/kernel.elf
-
-$(ISO_PATH):
+$(ISO_PATH): kernel
 	mkdir -p $(ISO_FOLDER)
 	grub-mkrescue /usr/lib/grub/i386-pc $(BUILD_FOLDER) -o $@
+
+run: kernel $(ISO_PATH)
+	$(QEMU) -cdrom $(ISO_PATH)
 
 kernel:
 	mkdir -p $(BUILD_STRUCTURE)

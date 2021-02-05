@@ -28,11 +28,11 @@ entrypoint:
 		; Bootloader code starts executing here
 		cli ; disable hardware interruptions
 
-		; TODO:
 		; - Initialize the stack pointer and EBP (both to the same value)
 		mov esp, stack_space
 		add esp, 2097152
 		mov ebp, esp
+		
 		; - Pass the multiboot info to the kernel entry point function
 		push ebx
 
@@ -51,6 +51,5 @@ entrypoint:
 ; nobits indicates value in the section aren't initialized (as with .bss)
 section .stack nobits
 
-; TODO:
 ; - Reserve a stack area (1MB minimum) for the kernel
 stack_space: resb 2097152

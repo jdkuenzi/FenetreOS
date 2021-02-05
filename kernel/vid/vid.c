@@ -1,5 +1,7 @@
 #include "./vid.h"
 
+static vid_t vid;
+
 void init_rec_cursor(void) {
 	outb(CMD_REGISTER, 0xA); // Write to command register 0xA
 	outb(DATA_REGISTER, 0x0); // Write to data register start value of cursor at 0

@@ -28,7 +28,7 @@ void my_printf(const char *fmt, ...) {
 		if (*fmt == '%') {
 			fmt++;
 			args++;
-			char buffer[50];
+			char buffer[BUFFER_SIZE];
 			switch (*fmt) {
 				case 'c': {
 					int n = (int)*args;
@@ -47,13 +47,13 @@ void my_printf(const char *fmt, ...) {
 						printChar('-');
 					}
 
-					my_printf(convert((unsigned int)n, 10, buffer));
+					my_printf(convert((unsigned int)n, 10, buffer, BUFFER_SIZE));
 					
 					break;
 				}
 				case 'x': {
 					unsigned int n = (unsigned int)*args;
-					my_printf("0x%s", convert(n, 16, buffer));
+					my_printf("0x%s", convert(n, 16, buffer, BUFFER_SIZE));
 					break;
 				}
 				default: {

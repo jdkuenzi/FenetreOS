@@ -17,8 +17,6 @@ typedef struct vid
 	uint8_t background_color;
 } vid_t;
 
-extern vid_t vid;
-
 void init_rec_cursor(void);
 void enable_cursor(void);
 void disable_cursor(void);

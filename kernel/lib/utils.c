@@ -2,11 +2,13 @@
 
 // Inspiré d'un code internet
 // Ref : http://www.firmcodes.com/write-printf-function-c/
-char *convert(unsigned int num, int base, char *buffer) { 
+char *convert(unsigned int num, int base, char *buffer, unsigned int size) { 
 	static char representation[]= "0123456789ABCDEF";
-	buffer = &buffer[49];
+	
+    buffer = &buffer[size-1];
 	*buffer = '\0';
-	do 
+	
+    do 
 	{ 
 		*--buffer = representation[num%base];
 		num /= base;
