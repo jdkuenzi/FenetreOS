@@ -31,7 +31,7 @@ entrypoint:
 		; TODO:
 		; - Initialize the stack pointer and EBP (both to the same value)
 		mov esp, stack_space
-		add esp, 1048576
+		add esp, 2097152
 		mov ebp, esp
 		; - Pass the multiboot info to the kernel entry point function
 		push ebx
@@ -53,4 +53,4 @@ section .stack nobits
 
 ; TODO:
 ; - Reserve a stack area (1MB minimum) for the kernel
-stack_space: resb 1048576
+stack_space: resb 2097152

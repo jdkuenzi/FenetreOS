@@ -2,7 +2,6 @@ include ../common.mk
 
 LD_FLAGS=-T kernel.ld -lgcc
 OUT=../build/boot/kernel.elf
-# CC_FLAGS=
 
 C_SRC:=$(shell find . -name "*.c")
 C_HEADERS:=$(shell find . -name "*.h")
@@ -15,13 +14,13 @@ ASM_OBJ:=$(ASM_SRC:.s=.o)
 $(OUT): $(C_OBJ) $(ASM_OBJ)
 	$(CC) $(LD_FLAGS) $^ -o $@
 
-%.o: %.c %.h
-	$(CC) $< -c
+%.o: %.c
+	$(CC) -c $< -o $@
 
 %.o: %.s
 	nasm -f elf32 $< -o $@
 
-.PHONY: clean
+.PHONY: vid pmio boot lib
 
 clean:
 	rm -rf $(OUT) $(C_OBJ) $(ASM_OBJ) $(C_DEPS)
