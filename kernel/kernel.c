@@ -143,6 +143,17 @@ void set_font_background_color(vga_t *vga, uint8_t fc, uint8_t bc) {
 	vga->background_color = bc;
 }
 
+uint16_t get_x_cursor() {
+	uint16_t pos = get_cursor();
+	uint16_t y = pos / COLONNES % LIGNES;
+	return (pos - (COLONNES * y)) % COLONNES;
+}
+
+uint16_t get_y_cursor() {
+	uint16_t pos = get_cursor();
+	return pos / COLONNES % LIGNES;
+}
+
 void init_vga_struct(vga_t *vga, uint8_t fc, uint8_t bc) {
 	memset(vga, 0, sizeof(vga_t));
 	vga->vidptr = (uint16_t*)VGA;
@@ -175,6 +186,20 @@ void init_vga(vga_t *vga, uint8_t fc, uint8_t bc) {
 	set_cursor_from_pos(0);
 }
 
+void scroll(vga_t *vga) {
+	int dist = get_x_cursor() - LIGNES + 1;
+	if (dist > 0)
+	{
+		uint8_t *newStart = ((uint8_t *) *vga->vidptr) + dist * COLONNES * 2;
+		int bytesToCopy = (LIGNES - dist) * COLONNES * 2;
+		uint8_t *newBlankStart = vga->vidptr + (LIGNES - dist) * COLONNES;
+		int byteToBlank = dist + COLONNES * 2;
+		// memcpy((uint8_t*) *vga->vidptr, newStart, bytesToCopy);
+		// memset((uint8_t*) newBlankStart, (vga->background_color << 12) | 0x20, byteToBlank);
+	}
+	
+}
+
 void printChar(vga_t *vga, char c) {
 	uint16_t x;
 	uint16_t y;
@@ -196,6 +221,7 @@ void printChar(vga_t *vga, char c) {
 	}
 
 	set_cursor_from_x_y(x, y);
+	scroll(vga);
 }
 
 // Permutation de deux valeurs
@@ -279,9 +305,6 @@ char* convertToDec(char *buffer, int base, int num) {
 	return buffer;
 }
 
-void scroll() {
-	int dist = get_cursor();
-}
 
 void my_printf(vga_t *vga, const char *fmt, ...) {
 	int *args = (int*)&fmt;
