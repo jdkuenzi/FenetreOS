@@ -8,8 +8,18 @@ extern void ld_kernel_end();
 uint_t kernel_start = (uint_t)&ld_kernel_start;
 uint_t kernel_end = (uint_t)&ld_kernel_end;
 
-// void scroll() {
-// 	int dist = get_cursor();
+// void scroll(vid_t *vid) {
+// 	int dist = get_x_cursor() - LIGNES + 1;
+// 	if (dist > 0)
+// 	{
+// 		uint8_t *newStart = ((uint8_t *) *vid->vidptr) + dist * COLONNES * 2;
+// 		int bytesToCopy = (LIGNES - dist) * COLONNES * 2;
+// 		uint8_t *newBlankStart = vid->vidptr + (LIGNES - dist) * COLONNES;
+// 		int byteToBlank = dist + COLONNES * 2;
+// 		// memcpy((uint8_t*) *vid->vidptr, newStart, bytesToCopy);
+// 		// memset((uint8_t*) newBlankStart, (vid->background_color << 12) | 0x20, byteToBlank);
+// 	}
+	
 // }
 
 void entry(multiboot_info_t* info)
