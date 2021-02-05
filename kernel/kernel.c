@@ -1,6 +1,6 @@
 #include "boot/multiboot.h"
 #include "lib/stdio.h"
-vid_t vid; // Extern in lib/stdio.h
+vid_t vid; // Extern in vid/vid.h
 
 // These are defined in the linker script: kernel.ld
 extern void ld_kernel_start();
@@ -19,8 +19,6 @@ uint_t kernel_end = (uint_t)&ld_kernel_end;
 // 		// memcpy((uint8_t*) *vid->vidptr, newStart, bytesToCopy);
 // 		// memset((uint8_t*) newBlankStart, (vid->background_color << 12) | 0x20, byteToBlank);
 // 	}
-	
-// }
 
 void entry(multiboot_info_t* info)
 {
@@ -31,7 +29,7 @@ void entry(multiboot_info_t* info)
 	// 	str++;
 	// }
 	// const char *lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
-	init_vid(&vid, 0x2, 0x0);
+	init_vid(0x2, 0x0);
 	my_printf(
 		"Kernel loaded\n	- ADDR: %x\n	- SIZE: %d [KB]\n	- RAM : %d [KB]\n", 
 		kernel_start, 

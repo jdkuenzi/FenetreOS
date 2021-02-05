@@ -10,7 +10,7 @@ void printChar(char c) {
 		x = 0;
 		y++;
 	} else if (c >= ' ') {
-		write_to_x_y(&vid, x, y, c);
+		write_to_x_y(x, y, c);
 		x++;
 	}
 

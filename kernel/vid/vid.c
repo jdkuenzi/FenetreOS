@@ -54,39 +54,39 @@ void set_cursor_from_x_y(uint16_t x, uint16_t y) {
 	set_cursor_from_pos(pos);
 }
 
-void set_font_background_color(vid_t *vid, uint8_t fc, uint8_t bc) {
-	vid->font_color = fc;
-	vid->background_color = bc;
+void set_font_background_color(uint8_t fc, uint8_t bc) {
+	vid.font_color = fc;
+	vid.background_color = bc;
 }
 
-void init_vid_struct(vid_t *vid, uint8_t fc, uint8_t bc) {
-	memset(vid, 0, sizeof(vid_t));
-	vid->vidptr = (uint16_t*)VGA;
-	set_font_background_color(vid, fc, bc);
+void init_vid_struct(uint8_t fc, uint8_t bc) {
+	memset(&vid, 0, sizeof(vid_t));
+	vid.vidptr = (uint16_t*)VGA;
+	set_font_background_color(fc, bc);
 }
 
-void write_to_pos(vid_t *vid, uint16_t pos, char c) {
-	vid->vidptr[pos] =  (vid->background_color << 12) | (vid->font_color << 8) | c;
+void write_to_pos(uint16_t pos, char c) {
+	vid.vidptr[pos] =  (vid.background_color << 12) | (vid.font_color << 8) | c;
 }
 
-void write_to_x_y(vid_t *vid, uint16_t x, uint16_t y, char c) {
+void write_to_x_y(uint16_t x, uint16_t y, char c) {
 	uint16_t pos = get_cursor_from_x_y(x, y);
-	write_to_pos(vid, pos, c);
+	write_to_pos(pos, c);
 }
 
-void clean_vid(vid_t *vid) {
+void clean_vid() {
 	uint16_t pos = 0;
 	while(pos < COLONNES * LIGNES) {
-		write_to_pos(vid, pos, ' ');		
+		write_to_pos(pos, ' ');		
 		pos++;
 	}
 }
 
-void init_vid(vid_t *vid, uint8_t fc, uint8_t bc) {
-	init_vid_struct(vid, fc, bc);
+void init_vid(uint8_t fc, uint8_t bc) {
+	init_vid_struct(fc, bc);
 	disable_cursor();
 	init_rec_cursor();
 	enable_cursor();
-	clean_vid(vid);
+	clean_vid();
 	set_cursor_from_pos(0);
 }
