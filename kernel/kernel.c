@@ -30,12 +30,13 @@ void entry(multiboot_info_t* info)
 	// }
 	// const char *lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 	init_vid(0x2, 0x0);
-	my_printf(
-		"Kernel loaded\n	- ADDR: %x\n	- SIZE: %d [KB]\n	- RAM : %d [KB]\n", 
-		kernel_start, 
-		(kernel_end - kernel_start)/1000,
-		info->mem_upper
-	);
+	
+	my_printf("Kernel loaded\n");
+
+	my_printf("	- ADDR: %x\n", kernel_start);
+	my_printf("	- SIZE: %d [KB]\n", (kernel_end - kernel_start)/1000);
+	my_printf("	- RAM : %d [KB]\n", info->mem_upper);
+
 	my_printf("%d module(s) loaded\n", info->mods_count);
 
 	multiboot_uint32_t *mods_addr = &info->mods_addr;
