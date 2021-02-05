@@ -60,13 +60,12 @@ void set_font_background_color(uint8_t fc, uint8_t bc) {
 }
 
 void init_vid_struct(uint8_t fc, uint8_t bc) {
-	memset(&vid, 0, sizeof(vid_t));
 	vid.vidptr = (uint16_t*)VGA;
 	set_font_background_color(fc, bc);
 }
 
 void write_to_pos(uint16_t pos, char c) {
-	vid.vidptr[pos] =  (vid.background_color << 12) | (vid.font_color << 8) | c;
+	vid.vidptr[pos] = (vid.background_color << 12) | (vid.font_color << 8) | c;
 }
 
 void write_to_x_y(uint16_t x, uint16_t y, char c) {
