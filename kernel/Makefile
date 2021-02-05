@@ -15,7 +15,7 @@ ASM_OBJ:=$(ASM_SRC:.s=.o)
 $(OUT): $(C_OBJ) $(ASM_OBJ)
 	$(CC) $(LD_FLAGS) $^ -o $@
 
-%.o: %.c
+%.o: %.c %.h
 	$(CC) $< -c
 
 %.o: %.s

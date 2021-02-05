@@ -21,7 +21,7 @@ extern void ld_kernel_end();
 uint_t kernel_start = (uint_t)&ld_kernel_start;
 uint_t kernel_end = (uint_t)&ld_kernel_end;
 
-// Ref : Ce code source vient de la librairie string.c (https://code.woboq.org/linux/linux/lib/string.c.html)
+// Ref : Ce code source vient de la librairie string (https://code.woboq.org/linux/linux/lib/string.c.html)
 // +------------------------------------------------------------+
 void *memset(void *dst, int value, uint_t count) {
 	char *d = dst;
@@ -217,32 +217,33 @@ void reverseBuffer(char *buffer)
 	}
 }
 
-void convert(unsigned int num, int base, char *buffer) { 
+// Inspiré d'un code internet
+// Ref : http://www.firmcodes.com/write-printf-function-c/
+char *convert(unsigned int num, int base, char *buffer) { 
 	static char representation[]= "0123456789ABCDEF";
-	int i = 0;
+	buffer = &buffer[49];
+	*buffer = '\0';
 	do 
 	{ 
+		*--buffer = representation[num%base];
 		num /= base;
-		buffer[i] = representation[num%base];
-		i++;
 	} while (num);
 
-	// reverseBuffer(buffer);
-	buffer[i] = '\0';
+	return buffer;
 }	
 	
 
 void my_printf(vga_t *vga, const char *fmt, ...) {
 	int *args = (int*)&fmt;
-
 	while (*fmt) {
 		if (*fmt == '%') {
-			// int *ptr;
 			fmt++;
 			args++;
+			char buffer[50];
 			switch (*fmt) {
 				case 'c': {
-					/* code */
+					int n = (int)*args;
+					printChar(vga, (char)n);
 					break;
 				}
 				case 's': {
@@ -250,7 +251,6 @@ void my_printf(vga_t *vga, const char *fmt, ...) {
 					break;
 				}
 				case 'd': {
-					char buffer[50];
 					int n = (int)*args;
 
 					if (n < 0) {
@@ -258,67 +258,16 @@ void my_printf(vga_t *vga, const char *fmt, ...) {
 						printChar(vga, '-');
 					}
 
-					convert(n, 10, buffer);
-					my_printf(vga, buffer);
+					my_printf(vga, convert((unsigned int)n, 10, buffer));
 					
 					break;
 				}
 				case 'x': {
-					char buffer[50];
 					unsigned int n = (unsigned int)*args;
-
-					convert(n, 16, buffer);
-					my_printf(vga, "0x%s", buffer);
+					my_printf(vga, "0x%s", convert(n, 16, buffer));
 
 					break;
 				}
-				//                 case 'd': {
-                //     int n = *((int *) args++);
-                //     int i = 0;
-                //     while (n)
-                //     {
-                //         int res = n % 10;        // Base 10 -> DEC
-				// 		buffer[i++] = 48 + res;
-                //         n = n / 10;
-                //     }
-                //     if (i == 0) {
-                //         buffer[i++] = '0';
-				// 	}
-				// 	if (n < 0) {
-        		// 		buffer[i++] = '-';
-				// 	}
-                //     buffer[i] = '\0';
-                //     char *newBuff = reverseBuffer(buffer, 0, i - 1);
-                //     while (*newBuff != NULL)
-                //     {
-                //         printChar(vga, *newBuff);
-                //         *newBuff++;
-                //     }
-                //     break;
-                // }
-                // case 'x': {
-                //     int n = *((int *) args++);
-                //     int i = 0;
-                //     while (n)
-                //     {
-                //         int res = n % 16;        // Base 16 -> HEX
-                //         if (res >= 10) 
-                //             buffer[i++] = 'a' + (res - 10);
-                //         else
-                //             buffer[i++] = '0' + res;
-                //         n = n / 16;
-                //     }
-                //     if (i == 0)
-                //         buffer[i++] = '0';
-                //     buffer[i] = '\0';
-                //     char *newBuff = reverseBuffer(buffer, 0, i - 1);
-                //     while (*newBuff != NULL)
-                //     {
-                //         printChar(vga, *newBuff);
-                //         *newBuff++;
-                //     }
-                //     break;
-                // }
 				default: {
 					break;
 				}
@@ -336,17 +285,29 @@ void entry(multiboot_info_t* info)
 	const char *lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 	vga_t vga;
 	init_vga(&vga, 0x2, 0x0);
-	my_printf(&vga, str);
-	set_cursor_from_x_y(0, 2);
-	my_printf(&vga, lorem);
-	my_printf(&vga, "\n\n");
-	my_printf(&vga, "Test 180		j'ai fait 2 tab !\n");
-	my_printf(&vga, "	\nTest 190");
-	my_printf(&vga, "\n%s -> %s", "0xFAFA", "64250");
-	my_printf(&vga, "\n%d", 10);
-	my_printf(&vga, "\n%d", -10);
-	my_printf(&vga, "\n%x = %d", 0xBA, 0xBA);
-	my_printf(&vga, "\n%x", 64250);
-	my_printf(&vga, "\n%d", 0xFAFA);
+	my_printf(&vga, "Kernel loaded  addr=%x, size=%d[KB]\n", kernel_start, (kernel_end - kernel_start)/1000);
+	my_printf(&vga, "%d module(s) loaded\n", info->mods_count);
+
+	multiboot_uint32_t *mods_addr = &info->mods_addr;
+	for (multiboot_uint32_t i = 0; i < info->mods_count; i++) {
+		my_printf(&vga, "	- Module %d: addr=%x, size=%d[B]\n", i, mods_addr, 0);
+		mods_addr++;
+	}
+
+	// my_printf(&vga, str);
+	// set_cursor_from_x_y(0, 2);
+	// my_printf(&vga, lorem);
+	// my_printf(&vga, "\n\n");
+	// my_printf(&vga, "Test 180		j'ai fait 2 tab !\n");
+	// my_printf(&vga, "	\nTest 190");
+	// my_printf(&vga, "\n%s -> %s", "0xFAFA", "64250");
+	// my_printf(&vga, "\n%d", 10);
+	// my_printf(&vga, "\n%d", -10);
+	// my_printf(&vga, "\n%x = %d", 0xBA, 0xBA);
+	// my_printf(&vga, "\n%x", 64250);
+	// my_printf(&vga, "\n%d", 0xFAFA);
+	// my_printf(&vga, "\n%d = %c", 65, 65);
+	// my_printf(&vga, "\n%c", 66);
+	// my_printf(&vga, "\n%c", 75);
 	return;
 }
