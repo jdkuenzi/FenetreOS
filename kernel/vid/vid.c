@@ -20,6 +20,9 @@ void disable_cursor(void) {
 }
 
 void set_cursor_from_pos(uint16_t pos) {
+	if (pos >= COLONNES * LIGNES) {
+        pos = scroll(pos);
+    }
 	outb(CMD_REGISTER, 0xE); 
 	outb(DATA_REGISTER, (uint8_t)(pos >> 8)); 
 	outb(CMD_REGISTER, 0xF); 
@@ -36,7 +39,7 @@ uint16_t get_cursor(void) {
 }
 
 uint16_t get_cursor_from_x_y(uint16_t x, uint16_t y) {
-	uint16_t pos = (y * COLONNES + x) % (COLONNES * LIGNES);
+	uint16_t pos = (y * COLONNES + x);
 	return pos;
 }
 
@@ -90,4 +93,13 @@ void init_vid(uint8_t fc, uint8_t bc) {
 	enable_cursor();
 	clean_vid();
 	set_cursor_from_pos(0);
+}
+
+uint16_t scroll(uint16_t pos) {
+    uint16_t *tmptr = NULL;
+    memcpy(tmptr, vid.vidptr, COLONNES * LIGNES * 2);
+    clean_vid();
+    tmptr += COLONNES;
+    memcpy(vid.vidptr, tmptr, COLONNES * LIGNES * 2 - COLONNES);
+    return pos - COLONNES;
 }

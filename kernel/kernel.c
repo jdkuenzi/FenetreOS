@@ -8,18 +8,6 @@ extern void ld_kernel_end();
 uint_t kernel_start = (uint_t)&ld_kernel_start;
 uint_t kernel_end = (uint_t)&ld_kernel_end;
 
-// void scroll(vid_t *vid) {
-// 	int dist = get_x_cursor() - LIGNES + 1;
-// 	if (dist > 0)
-// 	{
-// 		uint8_t *newStart = ((uint8_t *) *vid->vidptr) + dist * COLONNES * 2;
-// 		int bytesToCopy = (LIGNES - dist) * COLONNES * 2;
-// 		uint8_t *newBlankStart = vid->vidptr + (LIGNES - dist) * COLONNES;
-// 		int byteToBlank = dist + COLONNES * 2;
-// 		// memcpy((uint8_t*) *vid->vidptr, newStart, bytesToCopy);
-// 		// memset((uint8_t*) newBlankStart, (vid->background_color << 12) | 0x20, byteToBlank);
-// 	}
-
 /**
  * Program's entry point. 
  * @param info multiboot information.
@@ -55,6 +43,10 @@ void entry(multiboot_info_t* info)
 		my_printf(buffer);
 		mods_addr++;
 	}
+
+	set_cursor_from_x_y(80,24);
+	my_printf("A");
+    //my_printf("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
 
 	return;
 }

@@ -3,6 +3,7 @@
 #define _VID_H_
 
 #include "../pmio/pmio.h"
+#include "../lib/string.h"
 
 #define CMD_REGISTER 0x3D4
 #define DATA_REGISTER 0x3D5
@@ -33,5 +34,6 @@ void write_to_pos(uint16_t pos, char c);
 void write_to_x_y(uint16_t x, uint16_t y, char c);
 void clean_vid();
 void init_vid(uint8_t fc, uint8_t bc);
+uint16_t scroll(uint16_t pos);
 
 #endif
