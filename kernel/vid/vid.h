@@ -1,8 +1,9 @@
+#include "../pmio/pmio.h"
+#include "../lib/string.h"
 
 #ifndef _VID_H_
 #define _VID_H_
 
-#include "../pmio/pmio.h"
 
 #define CMD_REGISTER 0x3D4
 #define DATA_REGISTER 0x3D5
@@ -21,6 +22,7 @@ void init_rec_cursor(void);
 void enable_cursor(void);
 void disable_cursor(void);
 void set_cursor_from_pos(uint16_t pos);
+uint16_t scroll(uint16_t pos);
 void set_cursor_from_x_y(uint16_t x, uint16_t y);
 uint16_t get_cursor(void);
 uint16_t get_cursor_from_x_y(uint16_t x, uint16_t y);
