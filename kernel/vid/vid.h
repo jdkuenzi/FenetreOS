@@ -4,7 +4,6 @@
 #ifndef _VID_H_
 #define _VID_H_
 
-
 #define CMD_REGISTER 0x3D4
 #define DATA_REGISTER 0x3D5
 #define COLONNES 80
