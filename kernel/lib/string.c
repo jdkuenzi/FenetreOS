@@ -1,3 +1,14 @@
+/**
+ * @file string.c
+ * @brief library to use strings
+ *
+ * @author Ottavio Buonomo & Jean-Daniel Küenzi,
+ * ottavio.buonomo@etu.hesge.ch & jean-daniel.kuenzi@etu.hesge.ch
+ * @bug No known bugs.
+ * @date February 7, 2021
+ * @version 0.1
+ */
+
 #include "string.h"
 
 // Ref : Ce code source vient de la librairie string (https://code.woboq.org/linux/linux/lib/string.c.html)
