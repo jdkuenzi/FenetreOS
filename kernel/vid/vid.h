@@ -1,3 +1,14 @@
+/**
+ * @file vid.h
+ * @brief functions signatures to display the cursor and initialise the screen 
+ *
+ * @author Ottavio Buonomo & Jean-Daniel Küenzi,
+ * ottavio.buonomo@etu.hesge.ch & jean-daniel.kuenzi@etu.hesge.ch
+ * @bug No known bugs.
+ * @date February 7, 2021
+ * @version 0.1
+ */
+
 #include "../pmio/pmio.h"
 #include "../lib/string.h"
 

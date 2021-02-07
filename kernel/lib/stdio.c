@@ -1,5 +1,20 @@
+/**
+ * @file stdio.c
+ * @brief library for printing on the screen 
+ *
+ * @author Ottavio Buonomo & Jean-Daniel Küenzi,
+ * ottavio.buonomo@etu.hesge.ch & jean-daniel.kuenzi@etu.hesge.ch
+ * @bug No known bugs.
+ * @date February 7, 2021
+ * @version 0.1
+ */
+
 #include "stdio.h"
 
+/**
+ * Print a character on the screen and set cursor position
+ * @param c character to print
+ */
 void printChar(char c) {
 	uint16_t x = get_x_from_cursor();
 	uint16_t y = get_y_from_cursor();
@@ -14,7 +29,7 @@ void printChar(char c) {
 		x++;
 	}
 
-	if (x >= COLONNES) {
+	if (x >= COLONNES) {	// Out of the screen
 		y += x / COLONNES;
 		x = x % COLONNES;
 	}
@@ -22,24 +37,29 @@ void printChar(char c) {
 	set_cursor_from_x_y(x, y);
 }
 
+/**
+ * Print formatted string on the screen
+ * @param fmt wished string to print
+ * @param ... arguments to be printed
+ */
 void my_printf(const char *fmt, ...) {
 	int *args = (int*)&fmt;
 	while (*fmt) {
-		if (*fmt == '%') {
+		if (*fmt == '%') {	// Format
 			fmt++;
 			args++;
 			char buffer[BUFFER_SIZE];
 			switch (*fmt) {
-				case 'c': {
+				case 'c': {		// Character
 					int n = (int)*args;
 					printChar((char)n);
 					break;
 				}
-				case 's': {
+				case 's': {		// String
 					my_printf((char*)*args);
 					break;
 				}
-				case 'd': {
+				case 'd': {		// Number
 					int n = (int)*args;
 
 					if (n < 0) {
@@ -51,7 +71,7 @@ void my_printf(const char *fmt, ...) {
 					
 					break;
 				}
-				case 'x': {
+				case 'x': {		// Hex value
 					unsigned int n = (unsigned int)*args;
 					my_printf("0x%s", convert(n, 16, buffer, BUFFER_SIZE));
 					break;
