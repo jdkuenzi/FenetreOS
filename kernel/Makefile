@@ -1,6 +1,6 @@
 include ../common.mk
 
-LD_FLAGS=-T kernel.ld -lgcc
+LD_FLAGS=-T kernel.ld -lgcc -static
 OUT=../build/boot/kernel.elf
 
 C_SRC:=$(shell find . -name "*.c")
