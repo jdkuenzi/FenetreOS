@@ -14,7 +14,7 @@
 static vid_t vid;
 
 /**
- * Initialise the cursor with rectagle shape
+ * Initialise the cursor with rectangle shape
  */
 void init_rec_cursor(void) {
 	outb(CMD_REGISTER, 0xA); // Write to command register 0xA
