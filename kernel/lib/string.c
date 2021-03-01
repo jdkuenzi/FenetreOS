@@ -1,6 +1,6 @@
 /**
  * @file string.c
- * @brief library to use strings
+ * @brief library to use strings (array of char)
  *
  * @author Ottavio Buonomo & Jean-Daniel Küenzi,
  * ottavio.buonomo@etu.hesge.ch & jean-daniel.kuenzi@etu.hesge.ch

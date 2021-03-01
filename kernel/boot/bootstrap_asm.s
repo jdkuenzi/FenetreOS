@@ -2,6 +2,7 @@ global entrypoint  ; the entry point symbol defined in kernel.ld
 
 extern entry
 
+
 ; Values for the multiboot header
 MULTIBOOT_MAGIC        equ 0x1BADB002  ; multiboot magic value
 MULTIBOOT_ALIGN        equ 1   ; load kernel and modules on page boundary
@@ -37,9 +38,9 @@ entrypoint:
 		push ebx
 
 		; - Call the kernel entry point function (C code)
+		sti ; enable hardware interruptions                 
 		call entry
 		add esp, 8
-
 
 ; should never return from kernel main fonction
 .forever:              

@@ -4,7 +4,6 @@ LD_FLAGS=-T kernel.ld -lgcc -static
 OUT=../build/boot/kernel.elf
 
 C_SRC:=$(shell find . -name "*.c")
-C_HEADERS:=$(shell find . -name "*.h")
 C_OBJ:=$(C_SRC:.c=.o)
 C_DEPS:=$(C_OBJ:.o=.d)
 

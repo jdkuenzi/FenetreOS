@@ -48,7 +48,6 @@ void my_printf(const char *fmt, ...) {
 		if (*fmt == '%') {	// Format
 			fmt++;
 			args++;
-			char buffer[BUFFER_SIZE];
 			switch (*fmt) {
 				case 'c': {		// Character
 					int n = (int)*args;
@@ -60,6 +59,7 @@ void my_printf(const char *fmt, ...) {
 					break;
 				}
 				case 'd': {		// Number
+					char buffer[BUFFER_SIZE];
 					int n = (int)*args;
 
 					if (n < 0) {
@@ -72,6 +72,7 @@ void my_printf(const char *fmt, ...) {
 					break;
 				}
 				case 'x': {		// Hex value
+					char buffer[BUFFER_SIZE];
 					unsigned int n = (unsigned int)*args;
 					my_printf("0x%s", convert(n, 16, buffer, BUFFER_SIZE));
 					break;
