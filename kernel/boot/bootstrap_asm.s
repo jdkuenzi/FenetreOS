@@ -2,6 +2,7 @@ global entrypoint  ; the entry point symbol defined in kernel.ld
 
 extern entry
 
+STACK_MEMORY		   equ 2097152
 
 ; Values for the multiboot header
 MULTIBOOT_MAGIC        equ 0x1BADB002  ; multiboot magic value
@@ -31,15 +32,14 @@ entrypoint:
 
 		; - Initialize the stack pointer and EBP (both to the same value)
 		mov esp, stack_space
-		add esp, 2097152
+		add esp, STACK_MEMORY
 		mov ebp, esp
 		
 		; - Pass the multiboot info to the kernel entry point function
 		push ebx
 
 		; - Call the kernel entry point function (C code)
-		sti ; enable hardware interruptions                 
-		call entry
+		call entry         
 		add esp, 8
 
 ; should never return from kernel main fonction
@@ -53,4 +53,4 @@ entrypoint:
 section .stack nobits
 
 ; - Reserve a stack area (1MB minimum) for the kernel
-stack_space: resb 2097152
+stack_space: resb STACK_MEMORY
