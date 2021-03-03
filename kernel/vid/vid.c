@@ -83,12 +83,11 @@ uint16_t get_cursor_from_x_y(uint16_t x, uint16_t y) {
  * @return new cursor position after scroll
  */
 uint16_t scroll(uint16_t pos) {
-	uint16_t buffer[COLONNES * LIGNES * 2];
-	uint16_t *buf_ptr = buffer;
-	memcpy(buffer, vid.vidptr, COLONNES * LIGNES * 2);
+	uint_t count = COLONNES * LIGNES * 2 - COLONNES * 2;
+	uint16_t buffer[COLONNES * LIGNES - COLONNES];
+	memcpy(buffer, vid.vidptr + COLONNES, count);
 	clean_vid();
-	buf_ptr += COLONNES;
-	memcpy(vid.vidptr, buf_ptr, COLONNES * LIGNES * 2 - COLONNES * 2);
+	memcpy(vid.vidptr, buffer, count);
 	return pos - COLONNES;
 }
 
