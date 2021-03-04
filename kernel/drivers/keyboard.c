@@ -17,4 +17,5 @@ void keyboard_init() {
 // This function never blocks.
 int getc() {
 	// TODO
+	return 0;
 }

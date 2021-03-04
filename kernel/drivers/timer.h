@@ -1,7 +1,7 @@
 #ifndef _TIMER_H_
 #define _TIMER_H_
 
-#define MIN_FREQ_HZ 18
+#define MIN_FREQ_HZ 19
 #define MAX_FREQ_HZ 1193180
 
 #define CMD_REG 0x43

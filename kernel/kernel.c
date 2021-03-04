@@ -15,6 +15,7 @@
 #include "interrupt/idt.h"
 #include "drivers/timer.h"
 #include "drivers/pic.h"
+#include "x86.h"
 
 // These are defined in the linker script: kernel.ld
 extern void ld_kernel_start();
@@ -30,23 +31,23 @@ uint_t kernel_end = (uint_t)&ld_kernel_end;
 void entry(multiboot_info_t* info)
 {
 	uint_t RAM_in_KB = info->mem_upper * 1000 / 4096;
+	init_vid(COLOR_GREEN, COLOR_BLACK);
 	gdt_init(RAM_in_KB);
 	idt_init();
 	pic_init();
-	init_vid(COLOR_GREEN, COLOR_BLACK);
-	timer_init(50);
-	my_printf("ticks=%d\n", get_ticks());
-
+	timer_init(100);
+	sti(); // enable hardware interruptions      
+	// my_printf("ticks=%d\n", get_ticks());
 
 	// Print of modules (Logo and image)
 	multiboot_module_t *mods_addr = (multiboot_module_t*)info->mods_addr;
-	// for (multiboot_uint32_t i = 0; i < info->mods_count; i++) {
-	// 	multiboot_uint32_t size = mods_addr->mod_end - mods_addr->mod_start + 1;
-	// 	char buffer[size];
-	// 	memcpy(buffer, (void*)mods_addr->mod_start, size);
-	// 	my_printf(buffer);
-	// 	mods_addr++;
-	// }
+	for (multiboot_uint32_t i = 0; i < info->mods_count; i++) {
+		multiboot_uint32_t size = mods_addr->mod_end - mods_addr->mod_start + 1;
+		char buffer[size];
+		memcpy(buffer, (void*)mods_addr->mod_start, size);
+		my_printf(buffer);
+		mods_addr++;
+	}
 
 	// Print of kernel infos
 	my_printf("Kernel loaded\n");
@@ -75,13 +76,25 @@ void entry(multiboot_info_t* info)
 	my_printf("GDT_ptr\n");
 	my_printf("	- base  : %x\n", gdt_ptr.base);
 	my_printf("	- limit : %d * 4096 [B]\n", gdt_ptr.limit);
-	my_printf("ticks=%d\n", get_ticks());
+	// my_printf("ticks=%d\n", get_ticks());
 
-	// uint_t count = 10;
-	// while (count--) {
-	// 	my_printf("J'attends\n");
-	// 	sleep(100);
-	// }
+	uint_t count = 10;
+	my_printf("5\n");
+	sleep(1000);
+	my_printf("4\n");
+	sleep(1000);
+	my_printf("3\n");
+	sleep(1000);
+	my_printf("2\n");
+	sleep(1000);
+	my_printf("1\n");
+	sleep(1000);
+	my_printf("GO\n");
+	while (count--) {
+		my_printf("J'attends\n");
+		sleep(1000);
+	}
+	my_printf("END\n");
 	
 	return;
 }
