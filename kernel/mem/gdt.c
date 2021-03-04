@@ -79,7 +79,7 @@ void gdt_init(uint_t RAM_in_KB) {
 
 	// TODO: setup gdt_ptr so it points to the GDT and ensure it has the right limit.
 	gdt_ptr.base = (uint32_t)gdt;
-	gdt_ptr.limit = RAM_in_KB;
+	gdt_ptr.limit = sizeof(gdt)-1;
 
 	// TODO: load the GDT using the gdt_load assembly function
 	gdt_load(&gdt_ptr);
