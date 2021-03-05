@@ -1,7 +1,6 @@
-#include "../../common/types.h"
 #include "gdt.h"
 #include "../descriptors.h"
-#include "../lib/string.h"
+#include "../../common/lib/string.h"
 
 // Descriptor system bit (S)
 // For code or data segments

@@ -9,14 +9,15 @@
  * @version 0.1
  */
 
-#include "boot/multiboot.h"
-#include "lib/stdio.h"
+#include "x86.h"
 #include "mem/gdt.h"
+#include "boot/multiboot.h"
 #include "interrupt/idt.h"
 #include "drivers/timer.h"
 #include "drivers/pic.h"
 #include "drivers/keyboard.h"
-#include "x86.h"
+#include "../common/lib/string.h"
+#include "../common/lib/stdio.h"
 
 // These are defined in the linker script: kernel.ld
 extern void ld_kernel_start();

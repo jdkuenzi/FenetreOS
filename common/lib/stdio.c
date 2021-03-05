@@ -10,6 +10,7 @@
  */
 
 #include "stdio.h"
+#include "utils.h"
 
 /**
  * Print a character on the screen and set cursor position

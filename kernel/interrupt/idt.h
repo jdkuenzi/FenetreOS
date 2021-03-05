@@ -1,6 +1,8 @@
 #ifndef _IDT_H_
 #define _IDT_H_
 
+#include "../../common/types.h"
+
 #define INTERRUPT_COUNT     256
 
 #define FIRST_EXCEPTION     0

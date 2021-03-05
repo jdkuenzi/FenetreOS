@@ -1,6 +1,8 @@
 #ifndef _GDT_H_
 #define _GDT_H_
 
+#include "../../common/types.h"
+
 // kernel code and data selectors in the GDT
 #define GDT_KERNEL_CODE_SELECTOR  0x08
 #define GDT_KERNEL_DATA_SELECTOR  0x10

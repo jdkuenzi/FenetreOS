@@ -9,11 +9,10 @@
  * @version 0.1
  */
 
-#include "../pmio/pmio.h"
-#include "../lib/string.h"
-
 #ifndef _VID_H_
 #define _VID_H_
+
+#include "../types.h"
 
 #define CMD_REGISTER 0x3D4
 #define DATA_REGISTER 0x3D5

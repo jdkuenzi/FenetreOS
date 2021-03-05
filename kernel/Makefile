@@ -10,7 +10,9 @@ C_DEPS:=$(C_OBJ:.o=.d)
 ASM_SRC:=$(shell find . -name "*.s")
 ASM_OBJ:=$(ASM_SRC:.s=.o)
 
-$(OUT): $(C_OBJ) $(ASM_OBJ)
+LIB_OBJ:=$(shell find ../common -name "*.o")
+
+$(OUT): $(C_OBJ) $(ASM_OBJ) $(LIB_OBJ)
 	$(CC) $(LD_FLAGS) $^ -o $@
 
 %.o: %.c
@@ -19,9 +21,5 @@ $(OUT): $(C_OBJ) $(ASM_OBJ)
 %.o: %.s
 	nasm -f elf32 $< -o $@
 
-.PHONY: vid pmio boot lib
-
 clean:
 	rm -rf $(OUT) $(C_OBJ) $(ASM_OBJ) $(C_DEPS)
-
--include $(C_DEPS)

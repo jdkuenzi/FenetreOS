@@ -1,12 +1,11 @@
-#include "../../common/types.h"
 #include "idt.h"
 #include "irq.h"
-#include "../x86.h"
 #include "../mem/gdt.h"
-#include "../descriptors.h"
-#include "../lib/string.h"
-#include "../lib/stdio.h"
 #include "../drivers/pic.h"
+#include "../descriptors.h"
+#include "../x86.h"
+#include "../../common/lib/string.h"
+#include "../../common/lib/stdio.h"
 
 // Defined in irq.c
 extern handler_t irq_handlers[IRQ_COUNT];

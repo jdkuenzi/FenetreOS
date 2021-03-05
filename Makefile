@@ -20,10 +20,12 @@ kernel:
 	mkdir -p $(BUILD_STRUCTURE)
 	cp $(GRUB_CFG_SRC) $(GRUB_CFG_DST)
 	cp -r $(MODULE_SRC) $(MODULE_DST)
+	$(MAKE) -C common
 	$(MAKE) -C kernel
 
-.PHONY: kernel $(ISO_PATH)
+.PHONY: kernel common $(ISO_PATH)
 
 clean:
+	$(MAKE) clean -C common
 	$(MAKE) clean -C kernel
 	rm -rf $(BUILD_FOLDER) $(ISO_FOLDER)

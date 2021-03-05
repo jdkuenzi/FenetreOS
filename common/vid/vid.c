@@ -10,6 +10,8 @@
  */
 
 #include "./vid.h"
+#include "../pmio/pmio.h"
+#include "../lib/string.h"
 
 static vid_t vid;
 

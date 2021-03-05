@@ -1,8 +1,6 @@
-#include "../../common/types.h"
 #include "keyboard.h"
+#include "../../common/pmio/pmio.h"
 #include "../interrupt/irq.h"
-#include "../pmio/pmio.h"
-#include "../lib/stdio.h"
 
 static bool shift_is_pressed = false;
 static uint8_t scan_code;
@@ -15,13 +13,10 @@ static void keyboard_handler() {
 		{
 			if (scan_code == L_SHIFT || scan_code == R_SHIFT) {
 				shift_is_pressed = true;
-				// my_printf("shift pressed\n");
-			}
-			// my_printf("scan_code = %x\n", scan_code);	
+			}	
 		} else { // break code
 			if ((scan_code & 0x7F) == L_SHIFT || (scan_code & 0x7F) == R_SHIFT) {
 				shift_is_pressed = false;
-				// my_printf("shift unpressed\n");
 			}
 			scan_code = 0;
 		}

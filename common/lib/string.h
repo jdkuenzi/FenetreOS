@@ -12,7 +12,7 @@
 #ifndef _STRING_H_
 #define _STRING_H_
 
-#include "../../common/types.h"
+#include "../types.h"
 
 // Ref : Ce code source vient de la librairie string (https://code.woboq.org/linux/linux/lib/string.c.html)
 // +------------------------------------------------------------+

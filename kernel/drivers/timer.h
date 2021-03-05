@@ -1,6 +1,8 @@
 #ifndef _TIMER_H_
 #define _TIMER_H_
 
+#include "../../common/types.h"
+
 #define MIN_FREQ_HZ 19
 #define MAX_FREQ_HZ 1193180
 
