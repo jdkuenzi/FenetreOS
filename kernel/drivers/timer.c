@@ -50,7 +50,7 @@ void timer_init(uint32_t freq_hz) {
 	ticks = 0;
 	f_hz = freq_hz;
 
-	uint16_t div = MAX_FREQ_HZ / freq_hz;
+	uint16_t div = 11932;
 
 	outw(CMD_REG, REPEAT_MODE);
 	outb(CHAN_0, div & 0xff);
