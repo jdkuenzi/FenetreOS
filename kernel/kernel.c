@@ -15,6 +15,8 @@
 #include "interrupt/idt.h"
 #include "drivers/timer.h"
 #include "drivers/pic.h"
+#include "drivers/keyboard.h"
+#include "x86.h"
 
 // These are defined in the linker script: kernel.ld
 extern void ld_kernel_start();
@@ -30,23 +32,24 @@ uint_t kernel_end = (uint_t)&ld_kernel_end;
 void entry(multiboot_info_t* info)
 {
 	uint_t RAM_in_KB = info->mem_upper * 1000 / 4096;
+	init_vid(COLOR_GREEN, COLOR_BLACK);
 	gdt_init(RAM_in_KB);
 	idt_init();
 	pic_init();
-	init_vid(COLOR_GREEN, COLOR_BLACK);
-	timer_init(50);
-	my_printf("ticks=%d\n", get_ticks());
-
+	timer_init(100);
+	keyboard_init();
+	sti(); // enable hardware interruptions      
+	// my_printf("ticks=%d\n", get_ticks());
 
 	// Print of modules (Logo and image)
 	multiboot_module_t *mods_addr = (multiboot_module_t*)info->mods_addr;
-	// for (multiboot_uint32_t i = 0; i < info->mods_count; i++) {
-	// 	multiboot_uint32_t size = mods_addr->mod_end - mods_addr->mod_start + 1;
-	// 	char buffer[size];
-	// 	memcpy(buffer, (void*)mods_addr->mod_start, size);
-	// 	my_printf(buffer);
-	// 	mods_addr++;
-	// }
+	for (multiboot_uint32_t i = 0; i < info->mods_count; i++) {
+		multiboot_uint32_t size = mods_addr->mod_end - mods_addr->mod_start + 1;
+		char buffer[size];
+		memcpy(buffer, (void*)mods_addr->mod_start, size);
+		my_printf(buffer);
+		mods_addr++;
+	}
 
 	// Print of kernel infos
 	my_printf("Kernel loaded\n");
@@ -67,21 +70,36 @@ void entry(multiboot_info_t* info)
 		mods_addr++;
 	}
 
-	gdt_entry_t* gdt = get_gdt();
-	gdt_ptr_t gdt_ptr = get_gdt_ptr();
+	while (1)
+	{
+		char c = getc();
+		if (c) {
+			if (c == ASCII_ESC) {
+				break;
+			} else if (c == TAB) {
+				my_printf("\t");
+			} else if (c == L_SHIFT || c == R_SHIFT) {
+				/* Nothing to do */	
+			} else if (c == SPACE_BAR) {
+				my_printf(" ");
+			} else if (c == ENTER) {
+				my_printf("\n");
+			} else if (c == ASCII_BACKSPACE) {
+				backspace();
+			}else if (c == UP_ARROW) {
 
-	my_printf("GDT\n");
-	my_printf("	- addr  : %x\n", gdt);
-	my_printf("GDT_ptr\n");
-	my_printf("	- base  : %x\n", gdt_ptr.base);
-	my_printf("	- limit : %d * 4096 [B]\n", gdt_ptr.limit);
-	my_printf("ticks=%d\n", get_ticks());
+			} else if (c == LEFT_ARROW) {
 
-	// uint_t count = 10;
-	// while (count--) {
-	// 	my_printf("J'attends\n");
-	// 	sleep(100);
-	// }
+			} else if (c == RIGHT_ARROW) {
+
+			} else if (c == DOWN_ARROW) {
+
+			} else {
+				my_printf("%c", c);
+			}
+		}
+	}
+	
 	
 	return;
 }

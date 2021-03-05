@@ -45,22 +45,26 @@ typedef struct vid
 	uint8_t background_color;
 } vid_t;
 
-void init_rec_cursor(void);
-void enable_cursor(void);
-void disable_cursor(void);
-void set_cursor_from_pos(uint16_t pos);
-uint16_t scroll(uint16_t pos);
-void set_cursor_from_x_y(uint16_t x, uint16_t y);
-uint16_t get_cursor(void);
-uint16_t get_cursor_from_x_y(uint16_t x, uint16_t y);
-uint16_t get_y_from_cursor();
-uint16_t get_x_from_cursor();
+extern void init_rec_cursor(void);
+extern void enable_cursor(void);
+extern void disable_cursor(void);
+extern void set_cursor_from_pos(uint16_t pos);
+extern void scroll();
+extern void set_cursor_from_x_y(uint16_t x, uint16_t y);
+extern uint16_t get_cursor(void);
+extern uint16_t get_cursor_from_x_y(uint16_t x, uint16_t y);
+extern uint16_t get_y_from_cursor();
+extern uint16_t get_x_from_cursor();
 
-void set_font_background_color(uint8_t fc, uint8_t bc);
-void init_vid_struct(uint8_t fc, uint8_t bc);
-void write_to_pos(uint16_t pos, char c);
-void write_to_x_y(uint16_t x, uint16_t y, char c);
-void clean_vid();
-void init_vid(uint8_t fc, uint8_t bc);
+extern void backspace();
+extern void set_font_color(uint8_t fc);
+extern void set_background_color(uint8_t bc);
+extern uint8_t get_font_color();
+extern uint8_t get_background_color();
+extern void init_vid_struct(uint8_t fc, uint8_t bc);
+extern void write_to_pos(uint16_t pos, char c);
+extern void write_to_x_y(uint16_t x, uint16_t y, char c);
+extern void clean_vid();
+extern void init_vid(uint8_t fc, uint8_t bc);
 
 #endif

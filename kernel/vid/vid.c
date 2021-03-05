@@ -45,7 +45,8 @@ void disable_cursor(void) {
  */
 void set_cursor_from_pos(uint16_t pos) {
 	if (pos >= COLONNES * LIGNES) {
-		pos = scroll(pos);
+		scroll();
+		pos = COLONNES * LIGNES - COLONNES; // Cursor is set at the first column of the last row
 	}
 	outb(CMD_REGISTER, 0xE);
 	outb(DATA_REGISTER, (pos >> 8)); 
@@ -79,17 +80,13 @@ uint16_t get_cursor_from_x_y(uint16_t x, uint16_t y) {
 
 /**
  * Scroll the screen
- * @param pos current position of the cursor
- * @return new cursor position after scroll
  */
-uint16_t scroll(uint16_t pos) {
-	uint16_t buffer[COLONNES * LIGNES * 2];
-	uint16_t *buf_ptr = buffer;
-	memcpy(buffer, vid.vidptr, COLONNES * LIGNES * 2);
+void scroll() {
+	uint_t count = COLONNES * LIGNES * 2 - COLONNES * 2;
+	uint16_t buffer[COLONNES * LIGNES - COLONNES];
+	memcpy(buffer, vid.vidptr + COLONNES, count);
 	clean_vid();
-	buf_ptr += COLONNES;
-	memcpy(vid.vidptr, buf_ptr, COLONNES * LIGNES * 2 - COLONNES * 2);
-	return pos - COLONNES;
+	memcpy(vid.vidptr, buffer, count);
 }
 
 /**
@@ -124,11 +121,25 @@ void set_cursor_from_x_y(uint16_t x, uint16_t y) {
 /**
  * Set the font and the background colors
  * @param fc wished color for the font
+ */
+void set_font_color(uint8_t fc) {
+	vid.font_color = fc;
+}
+
+/**
+ * Set the font and the background colors
  * @param bc wished color for the background
  */
-void set_font_background_color(uint8_t fc, uint8_t bc) {
-	vid.font_color = fc;
+void set_background_color(uint8_t bc) {
 	vid.background_color = bc;
+}
+
+uint8_t get_font_color() {
+	return vid.font_color;
+}
+
+uint8_t get_background_color() {
+	return vid.background_color;
 }
 
 /**
@@ -138,7 +149,8 @@ void set_font_background_color(uint8_t fc, uint8_t bc) {
  */
 void init_vid_struct(uint8_t fc, uint8_t bc) {
 	vid.vidptr = (uint16_t*)VGA;
-	set_font_background_color(fc, bc);
+	set_font_color(fc);
+	set_background_color(bc);
 }
 
 /**
@@ -170,6 +182,12 @@ void clean_vid() {
 		write_to_pos(pos, ' ');		
 		pos++;
 	}
+}
+
+void backspace() {
+	uint16_t pos = get_cursor() - 1;
+	write_to_pos(pos, ' ');
+	set_cursor_from_pos(pos);
 }
 
 /**
