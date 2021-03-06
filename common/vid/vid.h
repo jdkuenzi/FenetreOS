@@ -44,16 +44,18 @@ typedef struct vid
 	uint8_t background_color;
 } vid_t;
 
-extern void init_rec_cursor(void);
 extern void enable_cursor(void);
 extern void disable_cursor(void);
 extern void set_cursor_from_pos(uint16_t pos);
-extern void scroll();
 extern void set_cursor_from_x_y(uint16_t x, uint16_t y);
 extern uint16_t get_cursor(void);
 extern uint16_t get_cursor_from_x_y(uint16_t x, uint16_t y);
 extern uint16_t get_y_from_cursor();
 extern uint16_t get_x_from_cursor();
+extern void move_cursor_up();
+extern void move_cursor_down();
+extern void move_cursor_left();
+extern void move_cursor_right();
 
 extern void backspace();
 extern void set_font_color(uint8_t fc);

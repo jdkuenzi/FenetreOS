@@ -42,6 +42,17 @@ void disable_cursor(void) {
 }
 
 /**
+ * Scroll the screen
+ */
+void scroll() {
+	uint_t count = COLONNES * LIGNES * 2 - COLONNES * 2;
+	uint16_t buffer[COLONNES * LIGNES - COLONNES];
+	memcpy(buffer, vid.vidptr + COLONNES, count);
+	clean_vid();
+	memcpy(vid.vidptr, buffer, count);
+}
+
+/**
  * Set the position of the cursor from a value and scroll if needed
  * @param pos wished position
  */
@@ -78,17 +89,6 @@ uint16_t get_cursor(void) {
 uint16_t get_cursor_from_x_y(uint16_t x, uint16_t y) {
 	uint16_t pos = (y * COLONNES + x);
 	return pos;
-}
-
-/**
- * Scroll the screen
- */
-void scroll() {
-	uint_t count = COLONNES * LIGNES * 2 - COLONNES * 2;
-	uint16_t buffer[COLONNES * LIGNES - COLONNES];
-	memcpy(buffer, vid.vidptr + COLONNES, count);
-	clean_vid();
-	memcpy(vid.vidptr, buffer, count);
 }
 
 /**
@@ -190,6 +190,34 @@ void backspace() {
 	uint16_t pos = get_cursor() - 1;
 	write_to_pos(pos, ' ');
 	set_cursor_from_pos(pos);
+}
+
+void move_cursor_up() {
+	uint16_t y = get_y_from_cursor();
+	uint16_t x = get_x_from_cursor();	
+	y--;
+	set_cursor_from_x_y(x, y);
+}
+
+void move_cursor_down() {
+	uint16_t y = get_y_from_cursor();
+	y++;
+	uint16_t x = get_x_from_cursor();	
+	set_cursor_from_x_y(x, y);
+}
+
+void move_cursor_left() {
+	uint16_t x = get_x_from_cursor();	
+	x--;
+	uint16_t y = get_y_from_cursor();
+	set_cursor_from_x_y(x, y);
+}
+
+void move_cursor_right() {
+	uint16_t x = get_x_from_cursor();	
+	uint16_t y = get_y_from_cursor();
+	x++;
+	set_cursor_from_x_y(x, y);
 }
 
 /**
