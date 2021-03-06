@@ -1,8 +1,22 @@
+/**
+ * @file keyboard_ch.c
+ * @brief Mapping of keyboard keys for the swiss layout
+ *
+ * @author Ottavio Buonomo & Jean-Daniel Küenzi,
+ * ottavio.buonomo@etu.hesge.ch & jean-daniel.kuenzi@etu.hesge.ch
+ * @bug No known bugs.
+ * @date March 8, 2021
+ * @version 0.1
+ */
+
 #include "./keyboard_ch.h"
 
 char keyboard_conf[SIZE];
 char shift_keyboard_conf[SIZE];
 
+/**
+ * Mapping of keyboard keys with shit pressed
+ */
 void shift_keyboard_conf_init() {
     shift_keyboard_conf[ESC] = ASCII_ESC;
 
@@ -68,6 +82,9 @@ void shift_keyboard_conf_init() {
     shift_keyboard_conf[DOWN_ARROW] = ASCII_DOWN_ARROW;
 }
 
+/**
+ * Mapping of keyboard keys with shit pressed
+ */
 void keyboard_conf_init() {
     keyboard_conf[ESC] = ASCII_ESC;
 

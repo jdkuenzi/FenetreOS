@@ -1,11 +1,11 @@
 /**
  * @file keyboard_ch.h
- * @brief configuration of an ch keyboard 
+ * @brief Mapping of keyboard keys for the swiss layout
  *
  * @author Ottavio Buonomo & Jean-Daniel Küenzi,
  * ottavio.buonomo@etu.hesge.ch & jean-daniel.kuenzi@etu.hesge.ch
  * @bug No known bugs.
- * @date March 5, 2021
+ * @date March 8, 2021
  * @version 0.1
  */
 #ifndef _KEYBOARD_CONF_CH_H_
