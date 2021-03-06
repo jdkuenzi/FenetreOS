@@ -19,6 +19,8 @@
 #include "../common/lib/string.h"
 #include "../common/lib/stdio.h"
 
+#define TIMER_FREQ_HZ 100
+
 // These are defined in the linker script: kernel.ld
 extern void ld_kernel_start();
 extern void ld_kernel_end();
@@ -33,14 +35,22 @@ uint_t kernel_end = (uint_t)&ld_kernel_end;
 void entry(multiboot_info_t* info)
 {
 	uint_t RAM_in_KB = info->mem_upper * 1000 / 4096;
+	
 	init_vid(COLOR_GREEN, COLOR_BLACK);
+	my_printf("Init vid OK !\n");
 	gdt_init(RAM_in_KB);
+	my_printf("Init GDT OK !\n");
 	idt_init();
+	my_printf("Init IDT OK !\n");
 	pic_init();
-	timer_init(100);
+	my_printf("Init PIC OK !\n");
+	timer_init(TIMER_FREQ_HZ);
+	my_printf("Init Timer OK !\n");
+	my_printf("\t- freq  : %d[Hz]\n", TIMER_FREQ_HZ);
 	keyboard_init();
-	sti(); // enable hardware interruptions      
-	// my_printf("ticks=%d\n", get_ticks());
+	my_printf("Init Keyboard OK !\n");
+	sti(); // enable hardware interruptions
+	my_printf("Enable hardware interruptions OK !\n");
 
 	// Print of modules (Logo and image)
 	multiboot_module_t *mods_addr = (multiboot_module_t*)info->mods_addr;
@@ -54,16 +64,16 @@ void entry(multiboot_info_t* info)
 
 	// Print of kernel infos
 	my_printf("Kernel loaded\n");
-	my_printf("	- addr  : %x\n", kernel_start);
-	my_printf("	- size  : %d [KB]\n", (kernel_end - kernel_start)/1000);
-	my_printf("	- RAM   : %d [KB]\n", info->mem_upper);
+	my_printf("\t- addr  : %x\n", kernel_start);
+	my_printf("\t- size  : %d [KB]\n", (kernel_end - kernel_start)/1000);
+	my_printf("\t- RAM   : %d [KB]\n", info->mem_upper);
 	my_printf("%d module(s) loaded\n", info->mods_count);
 
 	// Print of modules infos
 	mods_addr = (multiboot_module_t*)info->mods_addr;
 	for (multiboot_uint32_t i = 0; i < info->mods_count; i++) {
 		my_printf(
-			"	- M%d    : addr=%x, size=%d [B]\n", 
+			"\t- M%d    : addr=%x, size=%d [B]\n", 
 			i, 
 			mods_addr->mod_start,
 			mods_addr->mod_end - mods_addr->mod_start
@@ -73,28 +83,28 @@ void entry(multiboot_info_t* info)
 
 	while (1)
 	{
-		char c = getc();
+		uint8_t c = getc();
 		if (c) {
 			if (c == ASCII_ESC) {
 				break;
-			} else if (c == TAB) {
+			} else if (c == ASCII_TAB) {
 				my_printf("\t");
-			} else if (c == L_SHIFT || c == R_SHIFT) {
+			} else if (c == ASCII_SHIFT_IN) {
 				/* Nothing to do */	
-			} else if (c == SPACE_BAR) {
+			} else if (c == ASCII_SPACE) {
 				my_printf(" ");
-			} else if (c == ENTER) {
+			} else if (c == ASCII_ENTER) {
 				my_printf("\n");
 			} else if (c == ASCII_BACKSPACE) {
 				backspace();
-			}else if (c == UP_ARROW) {
-
-			} else if (c == LEFT_ARROW) {
-
-			} else if (c == RIGHT_ARROW) {
-
-			} else if (c == DOWN_ARROW) {
-
+			}else if (c == ASCII_UP_ARROW) {
+				move_cursor_up();
+			} else if (c == ASCII_LEFT_ARROW) {
+				move_cursor_left();
+			} else if (c == ASCII_RIGHT_ARROW) {
+				move_cursor_right();
+			} else if (c == ASCII_DOWN_ARROW) {
+				move_cursor_down();
 			} else {
 				my_printf("%c", c);
 			}
