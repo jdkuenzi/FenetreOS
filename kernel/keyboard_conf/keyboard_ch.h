@@ -16,6 +16,14 @@
 #define ASCII_ESC 0x1B
 #define ASCII_BACKSPACE 0x8
 #define ASCII_SPACE 0x20
+#define ASCII_TAB 0x9
+#define ASCII_SHIFT_IN 0xF
+#define ASCII_ENTER 0xD
+#define ASCII_UP_ARROW 0x8F
+#define ASCII_LEFT_ARROW 0x9F
+#define ASCII_RIGHT_ARROW 0xAF
+#define ASCII_DOWN_ARROW 0xBF
+#define ASCII_NO_VALUE 0x0
 
 // ch configuration
 #define ESC 0x1
@@ -45,6 +53,8 @@
 #define I 0x17
 #define O 0x18
 #define P 0x19  
+#define OP_HOOK 0x1A
+#define CL_HOOK 0x1B
 
 #define ENTER 0x1C
 

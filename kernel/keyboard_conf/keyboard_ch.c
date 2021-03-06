@@ -20,7 +20,7 @@ void shift_keyboard_conf_init() {
     shift_keyboard_conf[CIRCUMFLEX] = '`';
     shift_keyboard_conf[BACKSPACE] = ASCII_BACKSPACE;
 
-    shift_keyboard_conf[TAB] = TAB;
+    shift_keyboard_conf[TAB] = ASCII_TAB;
     shift_keyboard_conf[Q] = 'Q';
     shift_keyboard_conf[W] = 'W';
     shift_keyboard_conf[E] = 'E';
@@ -31,8 +31,10 @@ void shift_keyboard_conf_init() {
     shift_keyboard_conf[I] = 'I';
     shift_keyboard_conf[O] = 'O';
     shift_keyboard_conf[P] = 'P';
+    shift_keyboard_conf[OP_HOOK] = ASCII_NO_VALUE;
+    shift_keyboard_conf[CL_HOOK] = '!';
 
-    shift_keyboard_conf[ENTER] = ENTER;
+    shift_keyboard_conf[ENTER] = ASCII_ENTER;
 
     shift_keyboard_conf[A] = 'A';
     shift_keyboard_conf[S] = 'S';
@@ -44,7 +46,7 @@ void shift_keyboard_conf_init() {
     shift_keyboard_conf[K] = 'K';
     shift_keyboard_conf[L] = 'L';
 
-    shift_keyboard_conf[L_SHIFT] = L_SHIFT;
+    shift_keyboard_conf[L_SHIFT] = ASCII_SHIFT_IN;
     shift_keyboard_conf[LOWER_UPPER] = '>';
     shift_keyboard_conf[Y] = 'Y';
     shift_keyboard_conf[X] = 'X';
@@ -56,14 +58,14 @@ void shift_keyboard_conf_init() {
     shift_keyboard_conf[COMMA] = ';';
     shift_keyboard_conf[DOT] = ':';
     shift_keyboard_conf[HYPHEN] = '_';
-    shift_keyboard_conf[R_SHIFT] = R_SHIFT;
+    shift_keyboard_conf[R_SHIFT] = ASCII_SHIFT_IN;
 
     shift_keyboard_conf[SPACE_BAR] = ASCII_SPACE;
 
-    shift_keyboard_conf[UP_ARROW] = UP_ARROW;
-    shift_keyboard_conf[LEFT_ARROW] = LEFT_ARROW;
-    shift_keyboard_conf[RIGHT_ARROW] = RIGHT_ARROW;
-    shift_keyboard_conf[DOWN_ARROW] = DOWN_ARROW;
+    shift_keyboard_conf[UP_ARROW] = ASCII_UP_ARROW;
+    shift_keyboard_conf[LEFT_ARROW] = ASCII_LEFT_ARROW;
+    shift_keyboard_conf[RIGHT_ARROW] = ASCII_RIGHT_ARROW;
+    shift_keyboard_conf[DOWN_ARROW] = ASCII_DOWN_ARROW;
 }
 
 void keyboard_conf_init() {
@@ -83,7 +85,7 @@ void keyboard_conf_init() {
     keyboard_conf[CIRCUMFLEX] = '^';
     keyboard_conf[BACKSPACE] = ASCII_BACKSPACE;
 
-    keyboard_conf[TAB] = TAB;
+    keyboard_conf[TAB] = ASCII_TAB;
     keyboard_conf[Q] = 'q';
     keyboard_conf[W] = 'w';
     keyboard_conf[E] = 'e';
@@ -94,8 +96,10 @@ void keyboard_conf_init() {
     keyboard_conf[I] = 'i';
     keyboard_conf[O] = 'o';
     keyboard_conf[P] = 'p';
+    keyboard_conf[OP_HOOK] = ASCII_NO_VALUE;
+    keyboard_conf[CL_HOOK] = ASCII_NO_VALUE;
 
-    keyboard_conf[ENTER] = ENTER;
+    keyboard_conf[ENTER] = ASCII_ENTER;
 
     keyboard_conf[A] = 'a';
     keyboard_conf[S] = 's';
@@ -107,7 +111,7 @@ void keyboard_conf_init() {
     keyboard_conf[K] = 'k';
     keyboard_conf[L] = 'l';
 
-    keyboard_conf[L_SHIFT] = L_SHIFT;
+    keyboard_conf[L_SHIFT] = ASCII_SHIFT_IN;
     keyboard_conf[LOWER_UPPER] = '<';
     keyboard_conf[Y] = 'y';
     keyboard_conf[X] = 'x';
@@ -119,14 +123,14 @@ void keyboard_conf_init() {
     keyboard_conf[COMMA] = ',';
     keyboard_conf[DOT] = '.';
     keyboard_conf[HYPHEN] = '-';
-    keyboard_conf[R_SHIFT] = R_SHIFT;
+    keyboard_conf[R_SHIFT] = ASCII_SHIFT_IN;
 
     keyboard_conf[SPACE_BAR] = ASCII_SPACE;
 
-    keyboard_conf[UP_ARROW] = UP_ARROW;
-    keyboard_conf[LEFT_ARROW] = LEFT_ARROW;
-    keyboard_conf[RIGHT_ARROW] = RIGHT_ARROW;
-    keyboard_conf[DOWN_ARROW] = DOWN_ARROW;
+    keyboard_conf[UP_ARROW] = ASCII_UP_ARROW;
+    keyboard_conf[LEFT_ARROW] = ASCII_LEFT_ARROW;
+    keyboard_conf[RIGHT_ARROW] = ASCII_RIGHT_ARROW;
+    keyboard_conf[DOWN_ARROW] = ASCII_DOWN_ARROW;
 
     shift_keyboard_conf_init();
 }
