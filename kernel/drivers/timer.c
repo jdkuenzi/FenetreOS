@@ -1,3 +1,14 @@
+/**
+ * @file timer.c
+ * @brief Initialisation and handling of the timer
+ *
+ * @author Ottavio Buonomo & Jean-Daniel Küenzi,
+ * ottavio.buonomo@etu.hesge.ch & jean-daniel.kuenzi@etu.hesge.ch
+ * @bug No known bugs.
+ * @date March 8, 2021
+ * @version 0.1
+ */
+
 #include "timer.h"
 #include "../interrupt/irq.h"
 #include "../../common/pmio/pmio.h"
@@ -10,6 +21,9 @@ static uint8_t loop_logo_ptr = 0;
 static uint8_t loop_logo_size;
 static char loop_logo[] = "---Fenetre_OS---";
 
+/**
+ * Displays animated logo on the top right corner
+ */
 static void loop_logo_display() {
 	disable_cursor();
 
@@ -35,8 +49,10 @@ static void loop_logo_display() {
 	loop_logo_ptr = loop_logo_ptr + 1 % loop_logo_size;
 }
 
-// Timer interrupt handler
-// Update ticks count and display a logo (animated)
+/**
+ * Timer interrupt handler
+ * Update ticks count and display a logo (animated)
+ */
 static void timer_handler() {
 	ticks++;
 	if (!(ticks % (f_hz/5))) // display all 0.20s
@@ -45,6 +61,11 @@ static void timer_handler() {
 	}
 }
 
+/**
+ * Initialisation of the timer with a frequency
+ * 
+ * @param freq_hz wished frequency in Hz
+ */
 void timer_init(uint32_t freq_hz) {
 	ticks = 0;
 	f_hz = freq_hz;
@@ -62,10 +83,20 @@ void timer_init(uint32_t freq_hz) {
 	loop_logo_display();
 }
 
+/**
+ * Get the ticks of the timers
+ * 
+ * @return uint_t ticks of the timer
+ */
 uint_t get_ticks() {
 	return ticks;
 }
 
+/**
+ * Stop the system during some ms
+ * 
+ * @param ms time of sleep
+ */
 void sleep(uint_t ms) {
 	uint_t count = f_hz * ms / 1000;
 	count += get_ticks();

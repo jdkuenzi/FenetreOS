@@ -1,3 +1,14 @@
+/**
+ * @file timer.h
+ * @brief Initialisation and handling of the timer
+ *
+ * @author Ottavio Buonomo & Jean-Daniel Küenzi,
+ * ottavio.buonomo@etu.hesge.ch & jean-daniel.kuenzi@etu.hesge.ch
+ * @bug No known bugs.
+ * @date March 8, 2021
+ * @version 0.1
+ */
+
 #ifndef _TIMER_H_
 #define _TIMER_H_
 

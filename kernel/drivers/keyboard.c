@@ -1,3 +1,14 @@
+/**
+ * @file keyboard.c
+ * @brief Manage keyboard interruptions
+ *
+ * @author Ottavio Buonomo & Jean-Daniel Küenzi,
+ * ottavio.buonomo@etu.hesge.ch & jean-daniel.kuenzi@etu.hesge.ch
+ * @bug No known bugs.
+ * @date March 8, 2021
+ * @version 0.1
+ */
+
 #include "keyboard.h"
 #include "../interrupt/irq.h"
 #include "../../common/pmio/pmio.h"
@@ -9,12 +20,18 @@ static uint8_t scan_code_buffer[KEYBOARD_BUFFER_SIZE];
 static uint8_t ptr_insert_buffer;
 static uint8_t ptr_read_buffer;
 
+/**
+ * Reset the keyboard buffer
+ */
 static void reset_scan_code_buffer() {
 	ptr_insert_buffer = 0;
 	ptr_read_buffer = 0;
 	memset(scan_code_buffer, 0, KEYBOARD_BUFFER_SIZE);
 }
 
+/**
+ * Handle press on keyboard
+ */
 static void keyboard_handler() {
 	if (inb(KEYBOARD_STATE_REGISTER) & 0x1)
 	{
@@ -44,8 +61,10 @@ static void keyboard_handler() {
 	
 }
 
+/**
+ * Initialise keyboard buffer and interruption handler
+ */
 void keyboard_init() {
-	// TODO
 	reset_scan_code_buffer();
 	keyboard_conf_init();
 
@@ -54,8 +73,11 @@ void keyboard_init() {
 	install_irq_handler(1, handler);
 }
 
-// Return the character that was pressed on the keyboard or 0 if no character is present in the internal buffer.
-// This function never blocks.
+/**
+ * Get the character pressed on the keyboard or 0 if no character is present in the internal buffer
+ * This function never blocks.
+ * @return uint8_t pressed character code or 0
+ */
 uint8_t getc() {
 	uint8_t c = 0;
 	uint8_t scan_code = scan_code_buffer[ptr_read_buffer];
