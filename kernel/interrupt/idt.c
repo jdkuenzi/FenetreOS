@@ -1,9 +1,20 @@
+/**
+ * @file idt.c
+ * @brief handle interrupts and exceptions
+ *
+ * @author Ottavio Buonomo & Jean-Daniel Küenzi,
+ * ottavio.buonomo@etu.hesge.ch & jean-daniel.kuenzi@etu.hesge.ch
+ * @bug No known bugs.
+ * @date March 8, 2021
+ * @version 0.1
+ */
+
 #include "idt.h"
 #include "irq.h"
+#include "../x86.h"
 #include "../mem/gdt.h"
 #include "../drivers/pic.h"
 #include "../descriptors.h"
-#include "../x86.h"
 #include "../../common/lib/string.h"
 #include "../../common/lib/stdio.h"
 
@@ -20,15 +31,17 @@ typedef struct regs_st {
 	uint32_t eip, cs, eflags, esp, ss;
 } regs_t;
 
-// TODO: setup the IDT table for CPU exceptions and hardware interrupts
 static idt_entry_t idt[INTERRUPT_COUNT];
 static idt_ptr_t idt_ptr;
 
-// Build and return an IDT entry.
-// selector is the code segment selector to access the ISR
-// offset is the address of the ISR (for task gates, offset must be 0)
-// type indicates the IDT entry type
-// dpl is the privilege level required to call the associated ISR
+/**
+ * Build and return an IDT entry.
+ * @param selector the code segment selector to access the ISR
+ * @param offset the address of the ISR (for task gates, offset must be 0)
+ * @param type indicates the IDT entry type
+ * @param dpl the privilege level required to call the associated ISR
+ * @return IDT entry
+ */
 static idt_entry_t idt_build_entry(uint16_t selector, uint32_t offset, uint8_t type, uint8_t dpl) {
 	idt_entry_t entry;
 	entry.offset15_0 = offset & 0xffff;
@@ -147,16 +160,18 @@ static void *irqs[] = {
 	&_irq_15
 };
 
-// Exception handler
+/**
+ * Prints a message with the exception type as well as its number and stops the kernel.
+ */
 void exception_handler(regs_t *regs) {
-	// TODO: handle CPU exceptions:
-	// Prints a message with the exception type as well as its number and stops the kernel.
 	set_font_color(COLOR_RED);
 	my_printf("\nException : %s\nError code : %d\n", excep_desc[regs->number], regs->error_code);
 	halt();
 }
 
-// IRQ handler
+/**
+ * Call the function mapped to the interruption
+ */
 void irq_handler(regs_t *regs) {
 	uint_t irq = regs->number;
 	pic_eoi(irq);
@@ -166,15 +181,15 @@ void irq_handler(regs_t *regs) {
 		handler.func();
 }
 
+/**
+ * init the idt
+ */
 void idt_init() {
 	memset(irq_handlers, 0, sizeof(irq_handlers));
 	memset(idt, 0, sizeof(idt));
-	// TODO: setup idt_ptr, the IDT pointer
 	idt_ptr.base = (uint32_t)idt;
 	idt_ptr.limit = sizeof(idt)-1;
 	
-	// TODO: setup IDT entries for CPU exceptions and hardware interrupts (IRQs)
-	// Example: idt[3] = idt_build_entry(GDT_KERNEL_CODE_SELECTOR, (uint32_t)_exception_3, TYPE_INTERRUPT_GATE, DPL_KERNEL);
 	for (int i = 0; i <= 20; i++)
 	{
 		idt[i] = idt_build_entry(GDT_KERNEL_CODE_SELECTOR, (uint32_t)exceptions[i], TYPE_INTERRUPT_GATE, DPL_KERNEL);
@@ -185,7 +200,5 @@ void idt_init() {
 		idt[i] = idt_build_entry(GDT_KERNEL_CODE_SELECTOR, (uint32_t)irqs[i-32], TYPE_INTERRUPT_GATE, DPL_KERNEL);
 	}
 	
-	
-	// TODO: load the IDT using idt_ptr
 	idt_load(&idt_ptr);
 }

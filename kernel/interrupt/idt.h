@@ -1,3 +1,14 @@
+/**
+ * @file idt.h
+ * @brief functions signatures to handle interruptions and exceptions 
+ *
+ * @author Ottavio Buonomo & Jean-Daniel Küenzi,
+ * ottavio.buonomo@etu.hesge.ch & jean-daniel.kuenzi@etu.hesge.ch
+ * @bug No known bugs.
+ * @date March 8, 2021
+ * @version 0.1
+ */
+
 #ifndef _IDT_H_
 #define _IDT_H_
 

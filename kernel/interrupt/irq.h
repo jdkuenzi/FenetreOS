@@ -1,3 +1,14 @@
+/**
+ * @file irq.h
+ * @brief functions signatures to handle exceptions
+ *
+ * @author Florent Glück
+ * ottavio.buonomo@etu.hesge.ch & jean-daniel.kuenzi@etu.hesge.ch
+ * @bug No known bugs.
+ * @date March 8, 2021
+ * @version 0.1
+ */
+
 #ifndef _IRQ_H_
 #define _IRQ_H_
 

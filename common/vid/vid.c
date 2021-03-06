@@ -6,7 +6,7 @@
  * ottavio.buonomo@etu.hesge.ch & jean-daniel.kuenzi@etu.hesge.ch
  * @bug No known bugs.
  * @date February 7, 2021
- * @version 0.1
+ * @version 0.2
  */
 
 #include "./vid.h"
@@ -93,7 +93,7 @@ uint16_t get_cursor_from_x_y(uint16_t x, uint16_t y) {
 
 /**
  * Get the Y position of the cursor
- * @return position of the cursor between 0 and 2000, [0, 2000[
+ * @return position of the cursor between 0 and ROWS
  */
 uint16_t get_y_from_cursor() {
 	uint16_t pos = get_cursor();
@@ -102,7 +102,7 @@ uint16_t get_y_from_cursor() {
 
 /**
  * Get the X position of the cursor
- * @return position of the cursor between 0 and 2000, [0, 2000[
+ * @return position of the cursor between 0 and COLONNES
  */
 uint16_t get_x_from_cursor() {
 	uint16_t pos = get_cursor();
@@ -136,10 +136,18 @@ void set_background_color(uint8_t bc) {
 	vid.background_color = bc;
 }
 
+/**
+ * Get the font colors
+ * @return font's current color
+ */
 uint8_t get_font_color() {
 	return vid.font_color;
 }
 
+/**
+ * Get the background colors
+ * @return background's current color
+ */
 uint8_t get_background_color() {
 	return vid.background_color;
 }
@@ -186,12 +194,18 @@ void clean_vid() {
 	}
 }
 
+/**
+ * Deletes the character preceding the cursor
+ */
 void backspace() {
 	uint16_t pos = get_cursor() - 1;
 	write_to_pos(pos, ' ');
 	set_cursor_from_pos(pos);
 }
 
+/**
+ * Move the cursor to the previous line, in case of overflow, perform a scroll
+ */
 void move_cursor_up() {
 	uint16_t y = get_y_from_cursor();
 	uint16_t x = get_x_from_cursor();	
@@ -199,6 +213,9 @@ void move_cursor_up() {
 	set_cursor_from_x_y(x, y);
 }
 
+/**
+ * Move the cursor to the next line, in case of overflow, perform a scroll
+ */
 void move_cursor_down() {
 	uint16_t y = get_y_from_cursor();
 	y++;
@@ -206,6 +223,9 @@ void move_cursor_down() {
 	set_cursor_from_x_y(x, y);
 }
 
+/**
+ * Move the cursor to the previous columns, in case of overflow, go to the last columns of the previous line
+ */
 void move_cursor_left() {
 	uint16_t x = get_x_from_cursor();	
 	x--;
@@ -213,6 +233,9 @@ void move_cursor_left() {
 	set_cursor_from_x_y(x, y);
 }
 
+/**
+ * Move the cursor to the next columns, in case of overflow, go to the first columns of the next line
+ */
 void move_cursor_right() {
 	uint16_t x = get_x_from_cursor();	
 	uint16_t y = get_y_from_cursor();

@@ -6,7 +6,7 @@
  * ottavio.buonomo@etu.hesge.ch & jean-daniel.kuenzi@etu.hesge.ch
  * @bug No known bugs.
  * @date February 7, 2021
- * @version 0.1
+ * @version 0.2
  */
 
 #ifndef _VID_H_
