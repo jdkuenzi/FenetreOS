@@ -7,7 +7,6 @@ align 4                            ; the code must be 4 byte aligned
 ; Load the IDT
 global idt_load
 idt_load:
-	; TODO...
     mov  eax,[esp+4]  ; Get the pointer to the IDT, passed as a parameter.
     lidt [eax] ; where eax points to a 48 bits structure
     ret
