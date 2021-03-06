@@ -12,7 +12,7 @@
 #define DB_SEG  1
 #define DB_SYS  0
 
-// TODO: declare the GDT table
+// Declare the GDT table
 static gdt_entry_t gdt[3];
 static gdt_ptr_t gdt_ptr;
 
@@ -68,7 +68,7 @@ uint_t gdt_entry_to_selector(gdt_entry_t *entry) {
 
 // Initialize the GDT
 void gdt_init(uint_t RAM_in_KB) {
-	// TODO: initialize 3 segment descriptors: NULL, code segment, data segment.
+	// Initialize 3 segment descriptors: NULL, code segment, data segment.
 	// Code and data segments must have kernel privilege (see "Privilege levels" in descriptors.h)
 	// Segments limit must be the available RAM.
 	gdt[0] = gdt_make_null_segment();
@@ -76,10 +76,10 @@ void gdt_init(uint_t RAM_in_KB) {
 	gdt[2] = gdt_make_data_segment(0, RAM_in_KB, DPL_KERNEL);
 
 
-	// TODO: setup gdt_ptr so it points to the GDT and ensure it has the right limit.
+	// Setup gdt_ptr so it points to the GDT and ensure it has the right limit.
 	gdt_ptr.base = (uint32_t)gdt;
 	gdt_ptr.limit = sizeof(gdt)-1;
 
-	// TODO: load the GDT using the gdt_load assembly function
+	// Load the GDT using the gdt_load assembly function
 	gdt_load(&gdt_ptr);
 }

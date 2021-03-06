@@ -1,3 +1,7 @@
+/**
+ * @author Florent Glück
+ */
+
 #include "../../common/pmio/pmio.h"
 
 #define PIC1_CMD        0x20
