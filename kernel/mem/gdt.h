@@ -47,4 +47,6 @@ extern gdt_entry_t gdt_make_null_segment();
 extern gdt_entry_t gdt_make_code_segment(uint32_t base, uint32_t limit, uint8_t dpl);
 extern gdt_entry_t gdt_make_data_segment(uint32_t base, uint32_t limit, uint8_t dpl);
 
+gdt_entry_t gdt[5];
+
 #endif

@@ -1,5 +1,8 @@
 #include "task.h"
 #include "tss.h"
+#include "../mem/gdt.h"
+#include "../../common/lib/string.h"
+#include "../descriptors.h"
 
 // TSS of the task
 static tss_t task_tss;
@@ -29,7 +32,7 @@ void task_setup() {
 	// Define code and data segments in the LDT; both segments are overlapping
 	int ldt_code_idx = 0;  // Index of code segment descriptor in the LDT
 	int ldt_data_idx = 1;  // Index of data segment descriptor in the LDT
-	uint limit = sizeof(task_addr_space);  // Limit for both code and data segments
+	uint_t limit = sizeof(task_addr_space);  // Limit for both code and data segments
 	task_ldt[ldt_code_idx] = gdt_make_code_segment(task_addr_space, limit / 4096, DPL_USER);
 	task_ldt[ldt_data_idx] = gdt_make_data_segment(task_addr_space, limit / 4096, DPL_USER);
 
