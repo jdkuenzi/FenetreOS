@@ -199,6 +199,10 @@ void idt_init() {
 	{
 		idt[i] = idt_build_entry(GDT_KERNEL_CODE_SELECTOR, (uint32_t)irqs[i-32], TYPE_INTERRUPT_GATE, DPL_KERNEL);
 	}
+
+	// IDT entry 64: used for system calls
+	extern void _syscall_handler();  // Implemented in interrupt_asm.s
+	idt[64] = idt_build_entry(code_sel, (uint32_t)&_syscall_handler, TYPE_TRAP_GATE, DPL_USER);
 	
 	idt_load(&idt_ptr);
 }

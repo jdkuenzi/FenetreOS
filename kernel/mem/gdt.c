@@ -1,6 +1,7 @@
 #include "gdt.h"
 #include "../descriptors.h"
 #include "../../common/lib/string.h"
+#include "task/task.h"
 
 // Descriptor system bit (S)
 // For code or data segments
@@ -66,6 +67,17 @@ uint_t gdt_entry_to_selector(gdt_entry_t *entry) {
 	return GDT_INDEX_TO_SELECTOR(entry - gdt);
 }
 
+// Return a TSS entry  specified by the TSS structure and privilege level passed in arguments.
+// NOTE: a TSS entry can only reside in the GDT!
+gdt_entry_t gdt_make_tss(tss_t *tss, uint8_t dpl) {
+	return build_entry((uint32_t)tss, sizeof(tss_t)-1, TYPE_TSS, S_SYSTEM, DB_SYS, 0, dpl);
+}
+
+// Can only be set in the GDT!
+gdt_entry_t gdt_make_ldt(uint32_t base, uint32_t limit, uint8_t dpl) {
+	return build_entry(base, limit, TYPE_LDT, S_SYSTEM, DB_SYS, 0, dpl);
+}
+
 // Initialize the GDT
 void gdt_init(uint_t RAM_in_KB) {
 	// Initialize 3 segment descriptors: NULL, code segment, data segment.
@@ -82,4 +94,20 @@ void gdt_init(uint_t RAM_in_KB) {
 
 	// Load the GDT using the gdt_load assembly function
 	gdt_load(&gdt_ptr);
+
+	// gdt[3] stores the initial kernel TSS (where the CPU state of the first implicit task is saved)
+	static uint8_t initial_tss_kernel_stack[4096];  // 4KB of kernel stack
+	static tss_t initial_tss;
+	memset(&initial_tss, 0, sizeof(tss_t));
+	gdt[3] = gdt_make_tss(&initial_tss, DPL_KERNEL);  // CHECK index 3 is not used in your own kernel code!!!
+	initial_tss.ss0 = GDT_KERNEL_DATA_SELECTOR;
+	initial_tss.esp0 = ((uint32_t)initial_tss_kernel_stack) + sizeof(initial_tss_kernel_stack);
+
+	// Load the task register to point to the initial TSS selector.
+	// IMPORTANT: The GDT MUST be loaded prior to setting up the task register!
+	extern void task_ltr(uint16_t tss_selector);  // Implemented in task_asm.s
+	task_ltr(gdt_entry_to_selector(&gdt[3]));
+
+	// Setup a task
+	task_setup();	
 }
