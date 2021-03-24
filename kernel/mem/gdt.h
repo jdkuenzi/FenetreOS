@@ -2,10 +2,13 @@
 #define _GDT_H_
 
 #include "../../common/types.h"
+#include "../task/tss.h"
 
 // kernel code and data selectors in the GDT
 #define GDT_KERNEL_CODE_SELECTOR  0x08
 #define GDT_KERNEL_DATA_SELECTOR  0x10
+
+#define GDT_SIZE 21 // 8 * 2 task (LDT + TSS) + 5
 
 // Macro used to convert the index of a segment descriptor in the GDT into a segment selector.
 #define GDT_INDEX_TO_SELECTOR(idx) ((idx) << 3)
@@ -39,6 +42,8 @@ typedef struct gdt_ptr_st {
 	uint32_t base;     // Address of the first entry
 } __attribute__((packed)) gdt_ptr_t;
 
+extern void task_ltr(uint16_t tss_selector);  // Implemented in task_asm.s
+
 extern void gdt_init(uint_t RAM_in_KB);
 extern uint_t gdt_entry_to_selector(gdt_entry_t *entry);
 extern void gdt_load(gdt_ptr_t *gdt_ptr);
@@ -46,7 +51,9 @@ extern void gdt_load(gdt_ptr_t *gdt_ptr);
 extern gdt_entry_t gdt_make_null_segment();
 extern gdt_entry_t gdt_make_code_segment(uint32_t base, uint32_t limit, uint8_t dpl);
 extern gdt_entry_t gdt_make_data_segment(uint32_t base, uint32_t limit, uint8_t dpl);
+extern gdt_entry_t gdt_make_tss(tss_t *tss, uint8_t dpl);
+extern gdt_entry_t gdt_make_ldt(uint32_t base, uint32_t limit, uint8_t dpl);
 
-gdt_entry_t gdt[5];
+extern gdt_entry_t gdt[GDT_SIZE];
 
 #endif

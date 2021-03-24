@@ -1,7 +1,8 @@
 #include "gdt.h"
 #include "../descriptors.h"
 #include "../../common/lib/string.h"
-#include "task/task.h"
+#include "../task/task.h"
+#include "../task/tss.h"
 
 // Descriptor system bit (S)
 // For code or data segments
@@ -14,7 +15,7 @@
 #define DB_SYS  0
 
 // Declare the GDT table
-static gdt_entry_t gdt[3];
+gdt_entry_t gdt[GDT_SIZE];
 static gdt_ptr_t gdt_ptr;
 
 // Build and return a GDT entry.
@@ -87,7 +88,6 @@ void gdt_init(uint_t RAM_in_KB) {
 	gdt[1] = gdt_make_code_segment(0, RAM_in_KB, DPL_KERNEL);
 	gdt[2] = gdt_make_data_segment(0, RAM_in_KB, DPL_KERNEL);
 
-
 	// Setup gdt_ptr so it points to the GDT and ensure it has the right limit.
 	gdt_ptr.base = (uint32_t)gdt;
 	gdt_ptr.limit = sizeof(gdt)-1;
@@ -95,9 +95,10 @@ void gdt_init(uint_t RAM_in_KB) {
 	// Load the GDT using the gdt_load assembly function
 	gdt_load(&gdt_ptr);
 
-	// gdt[3] stores the initial kernel TSS (where the CPU state of the first implicit task is saved)
 	static uint8_t initial_tss_kernel_stack[4096];  // 4KB of kernel stack
 	static tss_t initial_tss;
+
+	// gdt[3] stores the initial kernel TSS (where the CPU state of the first implicit task is saved)
 	memset(&initial_tss, 0, sizeof(tss_t));
 	gdt[3] = gdt_make_tss(&initial_tss, DPL_KERNEL);  // CHECK index 3 is not used in your own kernel code!!!
 	initial_tss.ss0 = GDT_KERNEL_DATA_SELECTOR;
@@ -109,5 +110,5 @@ void gdt_init(uint_t RAM_in_KB) {
 	task_ltr(gdt_entry_to_selector(&gdt[3]));
 
 	// Setup a task
-	task_setup();	
+	init_tasks(8, 4);
 }
