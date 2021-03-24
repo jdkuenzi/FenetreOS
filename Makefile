@@ -1,4 +1,4 @@
-QEMU=qemu-system-i386 -enable-kvm -m 10M -monitor stdio
+QEMU=qemu-system-i386 -enable-kvm -m 20M -monitor stdio
 BUILD_FOLDER=build/
 BUILD_STRUCTURE=$(BUILD_FOLDER)boot/grub $(BUILD_FOLDER)dat
 MODULE_SRC=res/.
@@ -9,11 +9,11 @@ ISO_NAME=fenetre.iso
 ISO_FOLDER=ISO/
 ISO_PATH=$(ISO_FOLDER)$(ISO_NAME)
 
-$(ISO_PATH): kernel
+$(ISO_PATH): user kernel
 	mkdir -p $(ISO_FOLDER)
 	grub-mkrescue /usr/lib/grub/i386-pc $(BUILD_FOLDER) -o $@
 
-run: kernel $(ISO_PATH)
+run: user kernel $(ISO_PATH)
 	$(QEMU) -cdrom $(ISO_PATH)
 
 kernel:
@@ -23,9 +23,13 @@ kernel:
 	$(MAKE) -C common
 	$(MAKE) -C kernel
 
-.PHONY: kernel common $(ISO_PATH)
+user:
+	$(MAKE) -C user
+
+.PHONY: kernel common user $(ISO_PATH)
 
 clean:
 	$(MAKE) clean -C common
 	$(MAKE) clean -C kernel
+	$(MAKE) clean -C user
 	rm -rf $(BUILD_FOLDER) $(ISO_FOLDER)
