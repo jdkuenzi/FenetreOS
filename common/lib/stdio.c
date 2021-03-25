@@ -38,6 +38,15 @@ void printChar(char c) {
 	set_cursor_from_x_y(x, y);
 }
 
+void puts_error(char *s) {
+	disable_cursor();
+	uint8_t old_color = get_font_color();
+	set_font_color(COLOR_LIGHT_RED);
+	my_printf(s);
+	set_font_color(old_color);
+	enable_cursor();
+}
+
 /**
  * Print formatted string on the screen
  * @param fmt wished string to print

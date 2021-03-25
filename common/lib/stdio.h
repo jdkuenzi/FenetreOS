@@ -18,5 +18,6 @@
 
 extern void printChar(char c);
 extern void my_printf(const char *fmt, ...);
+extern void puts_error(char *s);
 
 #endif
