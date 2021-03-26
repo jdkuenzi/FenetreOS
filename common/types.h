@@ -27,6 +27,12 @@ typedef unsigned long long ulong_t;
 #define NULL 0
 #endif
 
+#define FILE_SYSTEM_BUFFER_SIZE 50
+typedef struct stat {
+    char filename[FILE_SYSTEM_BUFFER_SIZE];
+    uint32_t size;
+} stat_t;
+
 #define UNUSED(x) ((void)(x))
 
 #endif

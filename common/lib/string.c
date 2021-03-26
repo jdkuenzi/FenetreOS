@@ -82,7 +82,6 @@ int strcmp(const char *p, const char *q) {
 			break;
 	}
 	return 0;
-	
 }
 
 /**
@@ -104,6 +103,42 @@ int strncmp(const char *p, const char *q, uint_t count) {
 		count--;
 	}
 	return 0;
+}
+
+int start_with(const char *p, const char *q) {
+	return strncmp(p, q, strlen(p)) == 0;
+}
+
+char *trim(char *s) {
+	char *start = s;
+	char *end = s + strlen(s) - 1;
+
+	while(*start == ASCII_SPACE) { 
+		start++; 
+		if (start == end) {
+			return "";
+		}	
+	}
+
+	while(*end == ASCII_SPACE) { end--; }
+
+	uint_t size = end - start + 1;
+
+	memcpy(s, start, size);
+	s[size] = '\0';
+	return s;
+}
+
+char *to_lower(char *s) {
+	char *ptr = s;
+	while (*ptr)
+	{
+		if (*ptr >= ASCII_A && *ptr <= ASCII_Z) {
+			*ptr = *ptr + ASCII_TO_LOWER; 
+		}
+		ptr++;
+	}
+	return s;
 }
 
 /**

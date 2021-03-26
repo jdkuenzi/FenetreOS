@@ -3,9 +3,14 @@
 
 typedef enum { 
     SYSCALL_GETC = 0,
-    SYSCALL_EXEC,
-    ...
-    
+    SYSCALL_EXEC = 1,
+    SYSCALL_SET_CUSRSOR = 2,
+    SYSCALL_PUTS = 3,
+    SYSCALL_FILE_STAT = 4,
+    SYSCALL_FILE_READ = 5,
+    SYSCALL_READ_STRING = 6,
+    SYSCALL_SLEEP = 7,
+    SYSCALL_RANDOM = 8,
     __SYSCALL_END__
 } syscall_t;
 

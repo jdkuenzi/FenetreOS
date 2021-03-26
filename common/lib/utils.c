@@ -35,3 +35,85 @@ char *convert(unsigned int num, int base, char *buffer, unsigned int size) {
 
 	return buffer;
 }
+
+int atoi(char *s) {
+	bool sign = false;
+	int res = 0;
+
+	if (*s == '-')
+	{
+		sign = true;
+		s++;
+	} else if (*s == '+') {
+		s++;
+	}
+
+	while (*s)
+	{
+		uint_t d = *s - '0';
+		res = 10 * res + d;
+		s++; 
+	}
+
+	if (sign)
+	{
+		res = -res;
+	}
+
+	return res;
+}
+
+/**
+ * Build formatted string
+ * @param buffer buffer to store the string
+ * @param fmt wished string to print
+ * @param ... arguments to be printed
+ */
+char *sn_printf(char *s, const char *fmt, ...) {
+	char *ptr = s;
+	int *args = (int*)&fmt;
+	while (*fmt) {
+		if (*fmt == '%') {	// Format
+			fmt++;
+			args++;
+			switch (*fmt) {
+				case 'c': {		// Character
+					int n = (int)*args;
+					*ptr++ = (char)n;
+					break;
+				}
+				case 's': {		// String
+					ptr = sn_printf(ptr, (char*)*args);
+					break;
+				}
+				case 'd': {		// Number
+					char buffer[UTILS_BUFFER_SIZE];
+					int n = (int)*args;
+
+					if (n < 0) {
+						n = -n;
+						*ptr++ = '-';
+					}
+
+					ptr = sn_printf(ptr, convert((unsigned int)n, 10, buffer, UTILS_BUFFER_SIZE));
+					
+					break;
+				}
+				case 'x': {		// Hex value
+					char buffer[UTILS_BUFFER_SIZE];
+					unsigned int n = (unsigned int)*args;
+					ptr = sn_printf(ptr, "0x%s", convert(n, 16, buffer, UTILS_BUFFER_SIZE));
+					break;
+				}
+				default: {
+					break;
+				}
+			}
+		} else {
+			*ptr++ = *fmt;
+		}
+		fmt++;
+	}
+	*ptr = '\0';
+	return ptr;
+}

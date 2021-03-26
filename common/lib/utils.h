@@ -12,6 +12,12 @@
 #ifndef _UTILS_H
 #define _UTILS_H
 
-char *convert(unsigned int num, int base, char *buffer, unsigned int size);
+#include "../types.h"
+
+#define UTILS_BUFFER_SIZE 50
+
+extern char *convert(unsigned int num, int base, char *buffer, unsigned int size);
+int atoi(char *s);
+char *sn_printf(char *s, const char *fmt, ...);
 
 #endif
