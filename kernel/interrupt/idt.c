@@ -13,10 +13,10 @@
 #include "irq.h"
 #include "../x86.h"
 #include "../mem/gdt.h"
+#include "../vid/stdio.h"
 #include "../drivers/pic.h"
 #include "../descriptors.h"
 #include "../../common/lib/string.h"
-#include "../../common/lib/stdio.h"
 
 // Defined in irq.c
 extern handler_t irq_handlers[IRQ_COUNT];
@@ -76,28 +76,28 @@ extern void _exception_18();
 extern void _exception_19();
 extern void _exception_20();
 
-static void *exceptions[] = {
-	&_exception_0,
-	&_exception_1,
-	&_exception_2,
-	&_exception_3,
-	&_exception_4,
-	&_exception_5,
-	&_exception_6,
-	&_exception_7,
-	&_exception_8,
-	&_exception_9,
-	&_exception_10,
-	&_exception_11,
-	&_exception_12,
-	&_exception_13,
-	&_exception_14,
-	&_exception_15,
-	&_exception_16,
-	&_exception_17,
-	&_exception_18,
-	&_exception_19,
-	&_exception_20	
+static void (*exceptions[])() = {
+	_exception_0,
+	_exception_1,
+	_exception_2,
+	_exception_3,
+	_exception_4,
+	_exception_5,
+	_exception_6,
+	_exception_7,
+	_exception_8,
+	_exception_9,
+	_exception_10,
+	_exception_11,
+	_exception_12,
+	_exception_13,
+	_exception_14,
+	_exception_15,
+	_exception_16,
+	_exception_17,
+	_exception_18,
+	_exception_19,
+	_exception_20	
 };
 
 static char* excep_desc[] = {
@@ -141,31 +141,32 @@ extern void _irq_13();
 extern void _irq_14();
 extern void _irq_15();
 
-static void *irqs[] = {
-	&_irq_0,
-	&_irq_1,
-	&_irq_2,
-	&_irq_3,
-	&_irq_4,
-	&_irq_5,
-	&_irq_6,
-	&_irq_7,
-	&_irq_8,
-	&_irq_9,
-	&_irq_10,
-	&_irq_11,
-	&_irq_12,
-	&_irq_13,
-	&_irq_14,
-	&_irq_15
+static void (*irqs[])() = {
+	_irq_0,
+	_irq_1,
+	_irq_2,
+	_irq_3,
+	_irq_4,
+	_irq_5,
+	_irq_6,
+	_irq_7,
+	_irq_8,
+	_irq_9,
+	_irq_10,
+	_irq_11,
+	_irq_12,
+	_irq_13,
+	_irq_14,
+	_irq_15
 };
 
 /**
  * Prints a message with the exception type as well as its number and stops the kernel.
  */
 void exception_handler(regs_t *regs) {
-	set_font_color(COLOR_RED);
-	my_printf("\nException : %s\nError code : %d\n", excep_desc[regs->number], regs->error_code);
+	char buffer[XL_BUFFER];
+	eprintf("Exception : %s\nError code : %d", COLOR_RED, buffer, excep_desc[regs->number], regs->error_code);
+	// regs->eip = 5;
 	halt();
 }
 
@@ -202,7 +203,7 @@ void idt_init() {
 
 	// IDT entry 64: used for system calls
 	extern void _syscall_handler();  // Implemented in interrupt_asm.s
-	idt[64] = idt_build_entry(code_sel, (uint32_t)&_syscall_handler, TYPE_TRAP_GATE, DPL_USER);
+	idt[64] = idt_build_entry(GDT_KERNEL_CODE_SELECTOR, (uint32_t)&_syscall_handler, TYPE_TRAP_GATE, DPL_USER);
 	
 	idt_load(&idt_ptr);
 }

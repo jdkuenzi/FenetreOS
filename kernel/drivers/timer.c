@@ -10,10 +10,10 @@
  */
 
 #include "timer.h"
+#include "../vid/stdio.h"
+#include "../pmio/pmio.h"
 #include "../interrupt/irq.h"
-#include "../../common/pmio/pmio.h"
 #include "../../common/lib/string.h"
-#include "../../common/lib/stdio.h"
 
 static uint_t ticks;
 static uint32_t f_hz;
@@ -30,22 +30,22 @@ static void loop_logo_display() {
 	uint8_t tmp_ptr = loop_logo_ptr;
 	uint8_t x = COLONNES - loop_logo_size - 2; // -2 for '[' and ']' in my_prinft
 	uint8_t old_font_color = get_font_color();
-	uint16_t old_pos = get_cursor();
+	uint16_t old_x = get_x_from_cursor();
+	uint16_t old_y = get_y_from_cursor();
 	char reconstruct_loop_logo[loop_logo_size+1]; // size + 1 for \0
 	
-	set_font_color(COLOR_MAGENTA);
-	set_cursor_from_x_y(x, 0);
-	for (uint8_t i = 0; i < loop_logo_size; i++)
+	for (uint8_t i = 0; i < loop_logo_size; i++, tmp_ptr++)
 	{
 		reconstruct_loop_logo[i] = loop_logo[tmp_ptr % loop_logo_size];
-		tmp_ptr++;
 	}
 	reconstruct_loop_logo[loop_logo_size] = '\0';
+	set_font_color(COLOR_MAGENTA);
+	set_cursor_from_x_y(x, 0);
 	my_printf("[%s]", reconstruct_loop_logo);
-	set_cursor_from_pos(old_pos);
 	set_font_color(old_font_color);
-
+	set_cursor_from_x_y(old_x, old_y);
 	enable_cursor();
+
 	loop_logo_ptr = loop_logo_ptr + 1 % loop_logo_size;
 }
 
@@ -90,6 +90,10 @@ void timer_init(uint32_t freq_hz) {
  */
 uint_t get_ticks() {
 	return ticks;
+}
+
+uint_t random(uint_t max) {
+	return get_ticks() % max;
 }
 
 /**

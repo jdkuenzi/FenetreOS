@@ -25,6 +25,7 @@
 
 extern void timer_init(uint32_t freq_hz);
 extern uint_t get_ticks();
+uint_t random(uint_t max);
 extern void sleep(uint_t ms);
 
 #endif
