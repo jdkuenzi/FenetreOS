@@ -21,4 +21,6 @@
 
 extern void keyboard_init();
 extern uint8_t getc();
+void read_string(char *buf, uint16_t size);
+
 #endif

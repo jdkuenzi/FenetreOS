@@ -11,8 +11,8 @@
 
 #include "keyboard.h"
 #include "../interrupt/irq.h"
-#include "../../common/pmio/pmio.h"
-#include "../../common/lib/stdio.h"
+#include "../pmio/pmio.h"
+#include "../vid/stdio.h"
 #include "../../common/lib/string.h"
 
 static bool shift_is_pressed = false;
@@ -44,12 +44,7 @@ static void keyboard_handler() {
 				scan_code_buffer[ptr_insert_buffer] = scan_code;
 				ptr_insert_buffer++;
 			} else {
-				disable_cursor();
-				uint8_t old_color = get_font_color();
-				set_font_color(COLOR_LIGHT_RED);
-				my_printf("\nException : Keyboard buffer is full !\n");
-				enable_cursor();
-				set_font_color(old_color);
+				puts_error("Exception : Keyboard buffer is full !", COLOR_LIGHT_RED);
 			}
 		} else { // break code
 			if ((scan_code & 0x7F) == L_SHIFT || (scan_code & 0x7F) == R_SHIFT) {
@@ -58,7 +53,6 @@ static void keyboard_handler() {
 			scan_code = 0;
 		}
 	}
-	
 }
 
 /**
@@ -94,4 +88,50 @@ uint8_t getc() {
 		}
 	}
 	return c;
+}
+
+void read_string(char *buf, uint16_t size) {
+	uint16_t i = 0;
+	uint8_t c;
+	memset(buf, '\0', size);
+	while(1) { 
+		if ((c = getc())) {
+			if (i >= size - 1) {
+				c = ASCII_ENTER;
+			}
+
+			if (c == ASCII_ESC) {
+				/* Nothing to do */
+			} else if (c == ASCII_TAB) {
+				printChar('\t');
+				buf[i] = ' ';
+				buf[i++] = ' ';
+				buf[i++] = ' ';
+				buf[i++] = ' ';
+			} else if (c == ASCII_SHIFT_IN) {
+				/* Nothing to do */	
+			} else if (c == ASCII_SPACE) {
+				printChar(' ');
+				buf[i++] = ' ';
+			} else if (c == ASCII_ENTER) {
+				break;
+			} else if (c == ASCII_BACKSPACE) {
+				if (i > 0) {
+					backspace();
+					buf[--i] = '\0';
+				}
+			}else if (c == ASCII_UP_ARROW) {
+				/* Nothing to do */
+			} else if (c == ASCII_LEFT_ARROW) {
+				move_cursor_left();
+			} else if (c == ASCII_RIGHT_ARROW) {
+				move_cursor_right();
+			} else if (c == ASCII_DOWN_ARROW) {
+				/* Nothing to do */
+			} else {
+				printChar(c);
+				buf[i++] = c;
+			}
+		}
+	}
 }
