@@ -16,8 +16,11 @@
 #include "drivers/timer.h"
 #include "drivers/pic.h"
 #include "drivers/keyboard.h"
+#include "vid/stdio.h"
+#include "task/exec.h"
+#include "file_system/file_system.h"
 #include "../common/lib/string.h"
-#include "../common/lib/stdio.h"
+#include "../common/lib/utils.h"
 
 #define TIMER_FREQ_HZ 100
 
@@ -27,13 +30,16 @@ extern void ld_kernel_end();
 uint_t kernel_start = (uint_t)&ld_kernel_start;
 uint_t kernel_end = (uint_t)&ld_kernel_end;
 
+multiboot_info_t *info;
+
 /**
  * Program's entry point. 
  * @param info multiboot information.
  * @return program exit code.
  */
-void entry(multiboot_info_t* info)
-{
+void entry(multiboot_info_t* mb_info)
+{	
+	info = mb_info;
 	uint_t RAM_in_KB = info->mem_upper * 1000 / 4096;
 	
 	init_vid(COLOR_GREEN, COLOR_BLACK);
@@ -52,14 +58,14 @@ void entry(multiboot_info_t* info)
 	sti(); // enable hardware interruptions
 	my_printf("Enable hardware interruptions OK !\n");
 
-	// Print of modules (Logo and image)
-	multiboot_module_t *mods_addr = (multiboot_module_t*)info->mods_addr;
-	for (multiboot_uint32_t i = 0; i < info->mods_count; i++) {
-		multiboot_uint32_t size = mods_addr->mod_end - mods_addr->mod_start + 1;
-		char buffer[size];
-		memcpy(buffer, (void*)mods_addr->mod_start, size);
-		my_printf(buffer);
-		mods_addr++;
+	// Print of modules (Logo)
+	multiboot_module_t addr;
+	stat_t st;
+	if (find_file("logo", &addr)) {
+		file_stat(&addr, &st);
+		char buf[st.size];
+		file_read(&addr, buf);
+		my_printf(buf);
 	}
 
 	// Print of kernel infos
@@ -70,47 +76,21 @@ void entry(multiboot_info_t* info)
 	my_printf("%d module(s) loaded\n", info->mods_count);
 
 	// Print of modules infos
-	mods_addr = (multiboot_module_t*)info->mods_addr;
+	multiboot_module_t *mods_addr = (multiboot_module_t*)info->mods_addr;
 	for (multiboot_uint32_t i = 0; i < info->mods_count; i++) {
+		file_stat(mods_addr, &st);
 		my_printf(
-			"\t- M%d    : addr=%x, size=%d [B]\n", 
+			"\t- M%d    : addr=%x, size=%d [B] cmdline=%s\n", 
 			i, 
 			mods_addr->mod_start,
-			mods_addr->mod_end - mods_addr->mod_start
+			st.size,
+			st.filename
 		);
 		mods_addr++;
 	}
-
-	while (1)
-	{
-		uint8_t c = getc();
-		if (c) {
-			if (c == ASCII_ESC) {
-				break;
-			} else if (c == ASCII_TAB) {
-				my_printf("\t");
-			} else if (c == ASCII_SHIFT_IN) {
-				/* Nothing to do */	
-			} else if (c == ASCII_SPACE) {
-				my_printf(" ");
-			} else if (c == ASCII_ENTER) {
-				my_printf("\n");
-			} else if (c == ASCII_BACKSPACE) {
-				backspace();
-			}else if (c == ASCII_UP_ARROW) {
-				move_cursor_up();
-			} else if (c == ASCII_LEFT_ARROW) {
-				move_cursor_left();
-			} else if (c == ASCII_RIGHT_ARROW) {
-				move_cursor_right();
-			} else if (c == ASCII_DOWN_ARROW) {
-				move_cursor_down();
-			} else {
-				my_printf("%c", c);
-			}
-		}
-	}
 	
+	exec("shell.bin");
 	
-	return;
+	my_printf("\n+-------------------------+\n|    System shutdown !    |\n+-------------------------+\n");
+	halt();
 }

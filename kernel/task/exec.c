@@ -1,10 +1,14 @@
 #include "exec.h"
 #include "task.h"
 #include "../mem/gdt.h"
+#include "../vid/stdio.h"
+#include "../file_system/file_system.h"
 #include "../../common/lib/string.h"
 
+extern  multiboot_info_t* info;
+
 // Return true if the exec was successful or false otherwise.
-bool exec(char *filename, multiboot_info_t* info) {
+bool exec(char *filename) {
     bool success_flag = false;
     bool available_flag = false;
     task_t *task_ptr; 
@@ -20,18 +24,19 @@ bool exec(char *filename, multiboot_info_t* info) {
 
     if (available_flag) {
         task_ptr->is_available = false;
-        multiboot_module_t *mods_addr = (multiboot_module_t*)info->mods_addr;
-        for (int i = 0; i < info->mods_count; i++, mods_addr++)
-        {
-            if (strcmp((char*)mods_addr->cmdline, filename) == 0) {
-                multiboot_uint32_t size = mods_addr->mod_end - mods_addr->mod_start + 1;
-                memcpy(task_ptr->task_addr_space, (void*)mods_addr->mod_start, size);
-                task_switch(task_ptr->gdt_tss_sel);
-                task_ptr->is_available = true;
-                success_flag = true;
-                break;
-            }
+        multiboot_module_t addr;
+        if (find_file(filename, &addr)) {
+            file_read(&addr, (void*)task_ptr->task_addr_space);
+            task_switch(task_ptr->gdt_tss_sel);
+            memset(task_ptr->task_addr_space, 0, sizeof(task_ptr->task_addr_space));
+            success_flag = true;
+        } else {
+            char buffer[XL_BUFFER];
+            eprintf("Exception : Exec, file \"%s\" not found !", COLOR_LIGHT_RED, buffer, filename);
         }
+        task_ptr->is_available = true;
+    } else {
+        puts_error("Exception : Exec, no task available !", COLOR_LIGHT_RED);
     }
     
     return success_flag;

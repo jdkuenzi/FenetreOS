@@ -26,8 +26,8 @@ static void init_task(uint8_t tss_i, uint8_t ldt_i) {
 
 	// Define code and data segments in the LDT; both segments are overlapping
 	uint_t limit = sizeof(tasks[task_idx].task_addr_space); // Limit for both code and data segments
-	tasks[task_idx].task_ldt[ldt_code_idx] = gdt_make_code_segment(tasks[task_idx].task_addr_space, limit / 4096, DPL_USER);
-	tasks[task_idx].task_ldt[ldt_data_idx] = gdt_make_data_segment(tasks[task_idx].task_addr_space, limit / 4096, DPL_USER);
+	tasks[task_idx].task_ldt[ldt_code_idx] = gdt_make_code_segment((uint32_t)tasks[task_idx].task_addr_space, limit / 4096, DPL_USER);
+	tasks[task_idx].task_ldt[ldt_data_idx] = gdt_make_data_segment((uint32_t)tasks[task_idx].task_addr_space, limit / 4096, DPL_USER);
 
 	// Initialize the TSS fields
 	// The LDT selector must point to the task's LDT

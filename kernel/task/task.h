@@ -30,5 +30,6 @@ extern void task_ltr(uint16_t tss_selector);     // Implemented in task_asm.s
 extern void task_switch(uint16_t tss_selector);  // implemented in task_asm.s
 extern void init_tasks(int n, int start_i);
 
-extern task_t tasks[TASKS_SIZE];
+task_t tasks[TASKS_SIZE];
+
 #endif
