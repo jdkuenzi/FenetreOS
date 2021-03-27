@@ -1,5 +1,6 @@
 #include "ulibc.h"
 
+<<<<<<< HEAD
 extern int syscall(syscall_t nb, uint32_t arg1, uint32_t arg2, uint32_t arg3, uint32_t arg4);
 
 int setcursor(uint32_t x, uint32_t y) {
@@ -51,4 +52,17 @@ int sleep(uint_t ms) {
 
 void exit() {
 	asm("iret");
+=======
+int set_cursor_from_x_y(uint32_t x, uint32_t y) {
+    return syscall(SYSCALL_SET_CUSRSOR, x, y, 0, 0);
+}
+
+int puts(char* s) {
+    return syscall(SYSCALL_PUTS, (uint32_t)s, 0, 0, 0);
+}
+
+int my_printf(const char *fmt, ...) {
+    uint32_t *args = (uint32_t*)&fmt;
+    return syscall(SYSCALL_PUTS, *args, 0, 0, 0);
+>>>>>>> cd5dcb4d628bac7fd9c7f1b8404d803de924ba65
 }

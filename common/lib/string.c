@@ -106,7 +106,7 @@ int strncmp(const char *p, const char *q, uint_t count) {
 }
 
 int start_with(const char *p, const char *q) {
-	return strncmp(p, q, strlen(p)) == 0;
+	return (strncmp(p, q, strlen(p)) == 0);
 }
 
 char *trim(char *s) {

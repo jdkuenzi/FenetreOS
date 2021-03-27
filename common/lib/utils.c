@@ -65,7 +65,7 @@ int atoi(char *s) {
 
 /**
  * Build formatted string
- * @param buffer buffer to store the string
+ * @param s buffer to store the string
  * @param fmt wished string to print
  * @param ... arguments to be printed
  */
