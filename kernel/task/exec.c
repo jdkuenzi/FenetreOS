@@ -23,18 +23,17 @@ bool exec(char *filename) {
     }
 
     if (available_flag) {
-        task_ptr->is_available = false;
         multiboot_module_t addr;
         if (find_file(filename, &addr)) {
+            task_ptr->is_available = false;
             file_read(&addr, (void*)task_ptr->task_addr_space);
             task_switch(task_ptr->gdt_tss_sel);
-            memset(task_ptr->task_addr_space, 0, sizeof(task_ptr->task_addr_space));
             success_flag = true;
+            clean_task(task_ptr);
         } else {
             char buffer[XL_BUFFER];
             eprintf("Exception : Exec, file \"%s\" not found !", COLOR_LIGHT_RED, buffer, filename);
         }
-        task_ptr->is_available = true;
     } else {
         puts_error("Exception : Exec, no task available !", COLOR_LIGHT_RED);
     }

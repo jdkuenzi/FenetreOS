@@ -25,9 +25,9 @@ static void init_task(uint8_t tss_i, uint8_t ldt_i) {
 	tasks[task_idx].gdt_tss_sel = gdt_tss_sel;
 
 	// Define code and data segments in the LDT; both segments are overlapping
-	uint_t limit = sizeof(tasks[task_idx].task_addr_space); // Limit for both code and data segments
-	tasks[task_idx].task_ldt[ldt_code_idx] = gdt_make_code_segment((uint32_t)tasks[task_idx].task_addr_space, limit / 4096, DPL_USER);
-	tasks[task_idx].task_ldt[ldt_data_idx] = gdt_make_data_segment((uint32_t)tasks[task_idx].task_addr_space, limit / 4096, DPL_USER);
+	tasks[task_idx].limit = sizeof(tasks[task_idx].task_addr_space); // Limit for both code and data segments
+	tasks[task_idx].task_ldt[ldt_code_idx] = gdt_make_code_segment((uint32_t)tasks[task_idx].task_addr_space, tasks[task_idx].limit / 4096, DPL_USER);
+	tasks[task_idx].task_ldt[ldt_data_idx] = gdt_make_data_segment((uint32_t)tasks[task_idx].task_addr_space, tasks[task_idx].limit / 4096, DPL_USER);
 
 	// Initialize the TSS fields
 	// The LDT selector must point to the task's LDT
@@ -35,7 +35,7 @@ static void init_task(uint8_t tss_i, uint8_t ldt_i) {
 
 	// Setup code and stack pointers
 	tasks[task_idx].task_tss.eip = 0;
-	tasks[task_idx].task_tss.esp = tasks[task_idx].task_tss.ebp = limit; // stack pointers
+	tasks[task_idx].task_tss.esp = tasks[task_idx].task_tss.ebp = tasks[task_idx].limit; // stack pointers
 
 	// Code and data segment selectors are in the LDT
 	tasks[task_idx].task_tss.cs = GDT_INDEX_TO_SELECTOR(ldt_code_idx) | DPL_USER | LDT_SELECTOR;
@@ -52,6 +52,18 @@ static void init_task(uint8_t tss_i, uint8_t ldt_i) {
 	tasks[task_idx].task_tss.esp0 = (uint32_t)(tasks[task_idx].task_kernel_stack) + sizeof(tasks[task_idx].task_kernel_stack);
 	
 	task_idx++;
+}
+
+void clean_task(task_t *task) {
+	memset(task->task_addr_space, 0, sizeof(task->task_addr_space));
+	
+	task->task_tss.eip = 0;
+	task->task_tss.esp = task->task_tss.ebp = task->limit; // stack pointers
+
+	task->task_tss.eflags = (1 << 9);
+	task->task_tss.esp0 = (uint32_t)(task->task_kernel_stack) + sizeof(task->task_kernel_stack);
+
+	task->is_available = true;
 }
 
 void init_tasks(int n, int start_i) {
