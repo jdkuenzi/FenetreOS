@@ -87,7 +87,7 @@ char *sn_printf(char *s, const char *fmt, ...) {
 					break;
 				}
 				case 'd': {		// Number
-					char buffer[UTILS_BUFFER_SIZE];
+					char buffer[XS_BUFFER];
 					int n = (int)*args;
 
 					if (n < 0) {
@@ -95,14 +95,14 @@ char *sn_printf(char *s, const char *fmt, ...) {
 						*ptr++ = '-';
 					}
 
-					ptr = sn_printf(ptr, convert((unsigned int)n, 10, buffer, UTILS_BUFFER_SIZE));
+					ptr = sn_printf(ptr, convert((unsigned int)n, 10, buffer, XS_BUFFER));
 					
 					break;
 				}
 				case 'x': {		// Hex value
-					char buffer[UTILS_BUFFER_SIZE];
+					char buffer[XS_BUFFER];
 					unsigned int n = (unsigned int)*args;
-					ptr = sn_printf(ptr, "0x%s", convert(n, 16, buffer, UTILS_BUFFER_SIZE));
+					ptr = sn_printf(ptr, "0x%s", convert(n, 16, buffer, XS_BUFFER));
 					break;
 				}
 				default: {

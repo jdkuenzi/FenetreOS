@@ -9,18 +9,20 @@ ISO_NAME=fenetre.iso
 ISO_FOLDER=ISO/
 ISO_PATH=$(ISO_FOLDER)$(ISO_NAME)
 
-$(ISO_PATH): user kernel
+$(ISO_PATH): common user kernel
 	mkdir -p $(ISO_FOLDER)
 	grub-mkrescue /usr/lib/grub/i386-pc $(BUILD_FOLDER) -o $@
 
-run: user kernel $(ISO_PATH)
+run: $(ISO_PATH)
 	$(QEMU) -cdrom $(ISO_PATH)
+
+common:
+	$(MAKE) -C common
 
 kernel:
 	mkdir -p $(BUILD_STRUCTURE)
 	cp $(GRUB_CFG_SRC) $(GRUB_CFG_DST)
 	cp -r $(MODULE_SRC) $(MODULE_DST)
-	$(MAKE) -C common
 	$(MAKE) -C kernel
 
 user:

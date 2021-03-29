@@ -6,6 +6,14 @@ int setcursor(uint32_t x, uint32_t y) {
     return syscall(SYSCALL_SET_CUSRSOR, x, y, 0, 0);
 }
 
+int clean_vid_x_y(uint32_t x, uint32_t y) {
+	return syscall(SYSCALL_CLEAN_X_Y, x, y, 0, 0);
+}
+
+int puts_x_y(char *s, uint32_t x, uint32_t y) {
+	return syscall(SYSCALL_PUTS_X_Y, (uint32_t)s, x, y, 0);
+}
+
 int puts(char *s) {
     return syscall(SYSCALL_PUTS, (uint32_t)s, 0, 0, 0);
 }
@@ -42,7 +50,7 @@ int cat(char *filename) {
 }
 
 uint_t random(uint_t max) {
-	return syscall(SYSCALL_RANDOM, (uint_t)max, 0, 0, 0);
+	return syscall(SYSCALL_RANDOM, (uint32_t)max, 0, 0, 0);
 }
 
 int sleep(uint_t ms) {

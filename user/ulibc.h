@@ -6,15 +6,12 @@
 #include "../common/lib/string.h"
 #include "../common/lib/utils.h"
 
-#define ULIBC_SM_BUFFER 128
-#define ULIBC_MD_BUFFER 256
-#define ULIBC_LG_BUFFER 512
-#define ULIBC_XL_BUFFER 1024
-
 #define printf(fmt, buffer, ...) sn_printf(buffer, fmt, ##__VA_ARGS__); puts(buffer)
 
 int setcursor(uint32_t x, uint32_t y);
 int puts(char *s);
+int clean_vid_x_y(uint32_t x, uint32_t y);
+int puts_x_y(char *s, uint32_t x, uint32_t y);
 int exec(char *filename);
 int exec(char *filename);
 char getc();

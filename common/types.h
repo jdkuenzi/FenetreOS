@@ -33,6 +33,13 @@ typedef struct stat {
     uint32_t size;
 } stat_t;
 
+#define XS_BUFFER 64
+#define SM_BUFFER 128
+#define MD_BUFFER 256
+#define LG_BUFFER 512
+#define XL_BUFFER 1024
+#define XXL_BUFFER 2048
+
 #define UNUSED(x) ((void)(x))
 
 #endif

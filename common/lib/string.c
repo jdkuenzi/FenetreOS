@@ -105,6 +105,21 @@ int strncmp(const char *p, const char *q, uint_t count) {
 	return 0;
 }
 
+/**
+ * strcat - Append one %NUL-terminated string to another
+ * @dest: The string to be appended to
+ * @src: The string to append to it
+ */
+char *strcat(char *dest, const char *src) {
+	char *tmp = dest;
+	while (*dest)
+		dest++;
+	while ((*dest++ = *src++) != '\0')
+		;
+	return tmp;
+}
+// +------------------------------------------------------------+
+
 int start_with(const char *p, const char *q) {
 	return (strncmp(p, q, strlen(p)) == 0);
 }
@@ -152,4 +167,3 @@ int strlen(const char *s) {
 		/* nothing */;
 	return sc - s;
 }
-// +------------------------------------------------------------+

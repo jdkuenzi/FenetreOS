@@ -8,13 +8,13 @@ static void help() {
 }
 
 void main() {
-	// puts("True or false? This is easily the most awesome lab I've ever worked on :-)\n");
-	char cmd[15];
-	char sn_buf[20];
+	char cmd[SM_BUFFER];
+	char sn_buf[SM_BUFFER];
+	cat("shell_logo");
 	while (1) {
 		puts(">");
-		read_string(cmd, 15);
-		char *line = cmd;  // remove heading and trailing spaces and convert to lower case
+		read_string(cmd, SM_BUFFER);
+		char *line = to_lower(trim(cmd));  // remove heading and trailing spaces and convert to lower case
 		puts("\n");
 		if (line[0] == 0) {
 		}

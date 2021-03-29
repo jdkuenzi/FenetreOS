@@ -27,6 +27,7 @@ char *strncpy(char *dest, const char *src, uint_t count);
 int strcmp(const char *p, const char *q);
 int strncmp(const char *p, const char *q, uint_t count);
 int strlen(const char *s);
+char *strcat(char *dest, const char *src);
 // +------------------------------------------------------------+
 int start_with(const char *p, const char *q);
 char *to_lower(char *s);

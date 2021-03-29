@@ -11,6 +11,8 @@ typedef enum {
     SYSCALL_READ_STRING = 6,
     SYSCALL_SLEEP = 7,
     SYSCALL_RANDOM = 8,
+    SYSCALL_PUTS_X_Y = 9,
+    SYSCALL_CLEAN_X_Y = 10,
     __SYSCALL_END__
 } syscall_t;
 

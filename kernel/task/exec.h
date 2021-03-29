@@ -2,8 +2,7 @@
 #define _EXEC_H_
 
 #include "../../common/types.h"
-#include "../boot/multiboot.h"
 
-extern bool exec(char *filename, multiboot_info_t* info);
+extern bool exec(char *filename);
 
 #endif
