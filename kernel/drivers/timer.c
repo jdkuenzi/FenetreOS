@@ -27,7 +27,6 @@ static char loop_logo[] = "---Fenetre_OS---";
 static void loop_logo_display() {
     disable_cursor();
 
-<<<<<<< HEAD
 	uint8_t tmp_ptr = loop_logo_ptr;
 	uint8_t x = COLONNES - loop_logo_size - 2; // -2 for '[' and ']' in my_prinft
 	uint8_t old_font_color = get_font_color();
@@ -43,23 +42,6 @@ static void loop_logo_display() {
 	enable_cursor();
 
 	loop_logo_ptr = loop_logo_ptr + 1 % loop_logo_size;
-=======
-    uint8_t tmp_ptr = loop_logo_ptr;
-    uint8_t x = COLONNES - loop_logo_size - 2; // -2 for '[' and ']' in my_prinf
-    uint8_t old_font_color = get_font_color();
-    
-    set_font_color(COLOR_MAGENTA);
-    write_to_x_y(x++, 0, '[');
-    for (uint8_t i = 0; i < loop_logo_size; i++, tmp_ptr++)
-    {
-        write_to_x_y(x++, 0, loop_logo[tmp_ptr % loop_logo_size]);
-    }
-    write_to_x_y(x, 0, ']');
-    set_font_color(old_font_color);
-    enable_cursor();
-
-    loop_logo_ptr = loop_logo_ptr + 1 % loop_logo_size;
->>>>>>> ece039a88166ae85f9f5f3dd9baeaab60817c2c5
 }
 
 /**
