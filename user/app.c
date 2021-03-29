@@ -44,12 +44,14 @@ static uint8_t play_random(case_state_t grid[ROW][COL]) {
 
 static bool verify_vertical(uint8_t col, uint8_t row, case_state_t player_value, case_state_t grid[ROW][COL]) {
 	uint8_t counter = 0;
-	if (row >= ROW - 4) {
-		for (int i = row; i < row+4; i++)
+	uint8_t row_max = row + 3;
+	if (row_max < ROW) {
+		for (int i = row; i <= row_max; i++)
 		{
-			if (grid[i][col] == player_value) {
-				counter++;
+			if (grid[i][col] != player_value) {
+				break;
 			}
+			counter++;
 		}
 		
 	}
