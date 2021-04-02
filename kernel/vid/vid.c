@@ -186,12 +186,19 @@ void write_to_x_y(uint16_t x, uint16_t y, char c) {
 	write_to_pos(pos, c);
 }
 
+/**
+ * Write a character at the current position of the cursor and increment it
+ * @param c character to write
+ */
 void write_to_current_pos(char c) {
 	write_to_x_y(vid.x, vid.y, c);
 	vid.x++;
 	set_cursor_from_x_y(vid.x, vid.y);
 }
 
+/**
+ * Write 4 spaces from the current position
+ */
 void write_tab() {
 	write_to_current_pos(' ');
 	write_to_current_pos(' ');
@@ -199,13 +206,20 @@ void write_tab() {
 	write_to_current_pos(' ');
 }
 
+/**
+ * Place the cursor at the start of the next row
+ */
 void write_line_break() {
 	vid.x = 0;
 	vid.y++;
 	set_cursor_from_x_y(vid.x, vid.y);
 }
 
-
+/**
+ * Clean the video buffer from a position x and y
+ * @param x wished column
+ * @param y wished row
+ */
 void clean_from_x_y(uint16_t x, uint16_t y) {
 	uint16_t pos = get_cursor_from_x_y(x, y);
 	while(pos < COLONNES * LIGNES) {

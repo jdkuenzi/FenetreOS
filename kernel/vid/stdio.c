@@ -25,6 +25,12 @@ void printChar(char c) {
 	}
 }
 
+/**
+ * Print a string on the screen from an x and y position without updating the cursor
+ * @param buf string to print
+ * @param x wished row
+ * @param y wished column
+ */
 void puts_x_y(char *buf, uint16_t x, uint16_t y) {
 	char *ptr = buf;
 	uint16_t c_x = x;
@@ -44,6 +50,11 @@ void puts_x_y(char *buf, uint16_t x, uint16_t y) {
 	}
 }
 
+/**
+ * Print an error string on the screen
+ * @param s string to print
+ * @param color color of the font
+ */
 void puts_error(char *s, uint8_t color) {
 	disable_cursor();
 	uint8_t old_color = get_font_color();

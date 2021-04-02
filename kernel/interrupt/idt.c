@@ -16,6 +16,7 @@
 #include "../vid/stdio.h"
 #include "../drivers/pic.h"
 #include "../descriptors.h"
+#include "../task/task.h"
 #include "../../common/lib/string.h"
 
 // Defined in irq.c
@@ -166,7 +167,10 @@ static void (*irqs[])() = {
 void exception_handler(regs_t *regs) {
 	char buffer[XL_BUFFER];
 	eprintf("Exception : %s\nError code : %d", COLOR_RED, buffer, excep_desc[regs->number], regs->error_code);
-	regs->eip = 5;
+	uint32_t task_i = ((regs->tss_selector >> 3) - 4) / 2;
+	task_t *t = &tasks[task_i];
+	t->task_addr_space[0] = 0xCF;
+	regs->eip = 0;
 }
 
 /**

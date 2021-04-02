@@ -120,10 +120,21 @@ char *strcat(char *dest, const char *src) {
 }
 // +------------------------------------------------------------+
 
-int start_with(const char *p, const char *q) {
+/**
+ * Compare if the string q starts well with the string p
+ * @param p start string
+ * @param q string to compare
+ * @return int 0 if equal, -1 if first < second, 1 if first > second
+ */
+bool start_with(const char *p, const char *q) {
 	return (strncmp(p, q, strlen(p)) == 0);
 }
 
+/**
+ * Remove spaces at the start and end of a string
+ * @param s string to trim
+ * @return s
+ */
 char *trim(char *s) {
 	char *start = s;
 	char *end = s + strlen(s) - 1;
@@ -144,6 +155,11 @@ char *trim(char *s) {
 	return s;
 }
 
+/**
+ * Put the string in lowercase
+ * @param s string to lower
+ * @return s
+ */
 char *to_lower(char *s) {
 	char *ptr = s;
 	while (*ptr)

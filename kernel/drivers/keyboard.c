@@ -90,6 +90,11 @@ uint8_t getc() {
 	return c;
 }
 
+/**
+ * Allows you to manipulate the keyboard by filling a buffer with the keys entered
+ * @param buf write buffer
+ * @param size size of buffer
+ */
 void read_string(char *buf, uint16_t size) {
 	uint16_t i = 0;
 	uint8_t c;

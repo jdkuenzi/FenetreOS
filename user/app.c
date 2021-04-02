@@ -62,9 +62,9 @@ static bool verify_horizontal(uint8_t col, uint8_t row, case_state_t player_valu
 	uint8_t counter = 0;
 	int col_min = (col >= 3)? col - 3 : 0;
 	int col_max = (col > 3)? COL : col + 4; 
-	for (col_min; col_min < col_max; col_min++)
+	for (int i = col_min; i < col_max; i++)
 	{
-		counter = (grid[row][col_min] == player_value)? counter + 1 : 0;
+		counter = (grid[row][i] == player_value)? counter + 1 : 0;
 		if (counter == 4) {
 			break;
 		}
@@ -99,8 +99,8 @@ static bool verify_up_left_to_down_right(uint8_t col, uint8_t row, case_state_t 
 static bool verify_down_left_to_up_right(uint8_t col, uint8_t row, case_state_t player_value, case_state_t grid[ROW][COL]) {
     int counter = 0;
 
-    int diagonale_row = row + col; // pour trouver la position de début en ligne -> ligne actuelle - colonne actuelle
-    int diagonale_col = diagonale_row - ROW - 1; // pour trouver la position de début en colonne -> colonne actuelle - ligne actuelle
+    int diagonale_row = row + col;
+    int diagonale_col = diagonale_row - (ROW - 1); // pour trouver la position de début en colonne -> colonne actuelle - ligne actuelle
 
     if (diagonale_col < 0) {
         diagonale_col = 0;
@@ -208,7 +208,7 @@ static void print_grid(case_state_t grid[ROW][COL]) {
 
 static void display_error_msg() {
 	puts_x_y("\n+--------------------------------+\n| Please enter a correct entry ! |\n+--------------------------------+\n", 2, 20);
-	sleep(1500);
+	sleep(1000);
 }
 
 static void display_win_msg(bool current_player) {
@@ -223,12 +223,11 @@ static void display_win_msg(bool current_player) {
 
 static void display_equality_msg() {
 	puts_x_y("\n+------------+\n| Equality ! |\n+------------+\n", 2, 20);
-	sleep(1500);
 }
 
 static void display_replay_msg() {
 	puts_x_y("\n+-----------------+\n| Please replay ! |\n+-----------------+\n", 2, 20);
-	sleep(1500);
+	sleep(1000);
 }
 
 static void display_play_msg(bool current_player) {
@@ -292,7 +291,13 @@ void main() {
 	
 	game_mode--;
 
-	while (1 && game_mode != 4)
+	if (game_mode == 4) {
+		clean_vid_x_y(0, 0);
+		setcursor(0,1);
+		exit();
+	}
+
+	while (1)
 	{
 		clean_vid_x_y(0, 9);
 		display_info();
@@ -341,19 +346,16 @@ void main() {
 	}
 
 
-	if (game_mode != 4)
-	{
-		clean_vid_x_y(0, 9);
-		print_grid(grid);
-		if (win) {
-			display_win_msg(current_player);
-		} else {
-			display_equality_msg();
-		}
-		setcursor(2, 19);
-		puts("Press enter to exit ");
-		read_string(buf, SM_BUFFER);
+	clean_vid_x_y(0, 9);
+	print_grid(grid);
+	if (win) {
+		display_win_msg(current_player);
+	} else {
+		display_equality_msg();
 	}
+	setcursor(2, 19);
+	puts("Press enter to exit ");
+	read_string(buf, SM_BUFFER);
 	
 	clean_vid_x_y(0, 0);
 	setcursor(0,1);

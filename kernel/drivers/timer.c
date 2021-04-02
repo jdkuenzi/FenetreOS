@@ -66,7 +66,7 @@ void timer_init(uint32_t freq_hz) {
 	f_hz = freq_hz;
 	loop_logo_size = strlen(loop_logo);
 
-	uint16_t div = 11932;
+	uint16_t div = MAX_FREQ_HZ / freq_hz;
 
 	outw(CMD_REG, REPEAT_MODE);
 	outb(CHAN_0, div & 0xff);
