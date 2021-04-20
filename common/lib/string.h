@@ -28,6 +28,8 @@ int strcmp(const char *p, const char *q);
 int strncmp(const char *p, const char *q, uint_t count);
 int strlen(const char *s);
 char *strcat(char *dest, const char *src);
+char *strpbrk(const char *cs, const char *ct);
+char *strsep(char **s, const char *ct);
 // +------------------------------------------------------------+
 bool start_with(const char *p, const char *q);
 char *to_lower(char *s);
