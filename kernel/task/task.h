@@ -5,7 +5,7 @@
 #include "tss.h"
 
 #define TASKS_SIZE 8
-#define TASKS_ARGS 8
+#define TASKS_ARGS 10
 
 typedef struct task {
     // TSS of the task
@@ -21,12 +21,10 @@ typedef struct task {
     // Allocate 64KB of kernel stack for the task
     uint8_t task_kernel_stack[65536];
 
-    uint8_t tss_i;
-    uint8_t ldt_i;
     int gdt_tss_sel;
     int limit;
     int argc;
-    char **argv;
+    char *argv[TASKS_ARGS];
     bool is_available;
 } task_t;
 

@@ -8,7 +8,7 @@
 extern  multiboot_info_t* info;
 
 // Return true if the exec was successful or false otherwise.
-int exec(char *filename, char **argv, int argc) {
+int exec(char *filename, char *argv[], int argc) {
 
     int success_flag = -1;
     bool available_flag = false;
@@ -29,17 +29,15 @@ int exec(char *filename, char **argv, int argc) {
             multiboot_uint32_t size = addr.mod_end - addr.mod_start;
             task_ptr->is_available = false;
             file_read(&addr, (void*)task_ptr->task_addr_space);
-            task_ptr->argv = task_ptr->task_addr_space + size;
+            int *stack = (int*)task_ptr->task_addr_space + size;
+            stack = task_ptr->argv;
             for (int i = 0; i < argc; i++)
             {
                 task_ptr->argv[i] = argv[i];
             }
-            uint8_t *stack = &task_ptr->task_addr_space[1049000];
-            *stack = 5;
-            stack--;
-            *stack = 6;
-            stack--;
-            // *stack = argv;
+            stack = (int*)&task_ptr->task_addr_space[1049000];
+            *stack-- = task_ptr->argv;
+            *stack = argc;
             task_ptr->task_tss.esp -= 8;
             task_ptr->task_tss.esp0 -= 8;
             task_switch(task_ptr->gdt_tss_sel);

@@ -19,7 +19,7 @@ int puts(char *s) {
 }
 
 int exec(char *filename, char** argv, int argc) {
-	return syscall(SYSCALL_EXEC, (uint32_t)filename, argv, argc, 0);
+	return syscall(SYSCALL_EXEC, (uint32_t)filename, (uint32_t)argv, argc, 0);
 }
 
 char getc() {

@@ -7,49 +7,63 @@ static void help() {
 	puts("exit      : exit the shell\n");
 }
 
-int main(int argc) {
+int main(char *argv[], int argc) {
 	char cmd[SM_BUFFER];
 	char sn_buf[SM_BUFFER];
+	char *local_argv[ARGV_BUFFER];
+	int local_argc;
 	int return_code;
 	cat("shell_logo");
 	printf("\nargc = %d\n", sn_buf, argc);
-	// for (int i = 0; i < argc; i++)
-	// {
-	// 	sn_printf(sn_buf, "\n%s\n", argv[i]);
-	// 	puts(sn_buf);
-	// }
+	for (int i = 0; i < argc; i++)
+	{
+		sn_printf(sn_buf, "\n%s\n", argv[i]);
+		puts(sn_buf);
+	}
 
 	while (1)
 	{
 		puts(">");
 		read_string(cmd, SM_BUFFER);
 		char *line = to_lower(trim(cmd)); // remove heading and trailing spaces and convert to lower case
-		puts("\n");
-		if (line[0] == 0) {
-			
+		local_argc = 0;
+		while (line)
+		{
+			local_argv[local_argc] = strsep(&line, " ");
+			local_argc++;
 		}
-		else if (strcmp("help", line) == 0) {
+
+		// printf("\nlocal_argc = %d\n", sn_buf, local_argc);
+		// for (int i = 0; i < local_argc; i++)
+		// {
+		// 	printf("\nlocal_argv[%d]=%s len=%d\n", sn_buf, i, local_argv[i], strlen(local_argv[i]));
+		// }
+		puts("\n");
+		if (cmd[0] == 0)
+		{
+		}
+		else if (strcmp("help", cmd) == 0) {
 			help();
 		}
-		else if (start_with("cat ", line)) {
-			cat(trim(line + strlen("cat ")));
+		else if (strcmp("cat", cmd) == 0 && local_argc > 1)
+		{
+			cat(local_argv[1]);
 		}
-		else if (start_with("sleep ", line)) {
-			uint_t ms = atoi(trim(line + strlen("sleep ")));
+		else if (strcmp("sleep", cmd) == 0 && local_argc > 1)
+		{
+			uint_t ms = atoi(local_argv[1]);
 			printf("Sleeping for %dms...\n", sn_buf, ms);
 			sleep(ms);
 		}
-		else if (strcmp("exit", line) == 0) {
+		else if (strcmp("exit", cmd) == 0) {
 			puts("\nBye.\n");
 			break;
 			// exit();
 		}
 		// Attempt to run the specified file
 		else {
-			// printf("\nline = %s\n", sn_buf, line);
-			// printf("Je vais executer %s\n", sn_buf, line);
-			return_code = exec(line, NULL, 0);
-			printf("%s exit with code %d\n", sn_buf, line, return_code);
+			return_code = exec(cmd, local_argv, local_argc);
+			printf("%s exit with code %d\n", sn_buf, cmd, return_code);
 		}
 	}
 
