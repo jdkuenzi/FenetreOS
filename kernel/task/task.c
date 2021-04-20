@@ -14,8 +14,6 @@ static void init_task(uint8_t tss_i, uint8_t ldt_i) {
 	tasks[task_idx].is_available = true;
 	tasks[task_idx].argc = 0;
 
-	tasks[task_idx].tss_i = tss_i;
-	tasks[task_idx].ldt_i = ldt_i;
 	memset(&tasks[task_idx].task_tss, 0, sizeof(tss_t));
 	// Add the task's TSS and LDT to the GDT
 	gdt[tss_i] = gdt_make_tss(&tasks[task_idx].task_tss, DPL_KERNEL);

@@ -34,12 +34,9 @@ int exec(char *filename, char **argv, int argc) {
             {
                 task_ptr->argv[i] = argv[i];
             }
-            uint8_t *stack = &task_ptr->task_addr_space[1049000];
-            *stack = 5;
-            stack--;
-            *stack = 6;
-            stack--;
-            // *stack = argv;
+            int *stack = (int*)&task_ptr->task_addr_space[1049000];
+            *stack-- = argv;
+            *stack = argc;
             task_ptr->task_tss.esp -= 8;
             task_ptr->task_tss.esp0 -= 8;
             task_switch(task_ptr->gdt_tss_sel);

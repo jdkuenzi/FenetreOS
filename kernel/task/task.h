@@ -21,8 +21,6 @@ typedef struct task {
     // Allocate 64KB of kernel stack for the task
     uint8_t task_kernel_stack[65536];
 
-    uint8_t tss_i;
-    uint8_t ldt_i;
     int gdt_tss_sel;
     int limit;
     int argc;

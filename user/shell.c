@@ -7,17 +7,17 @@ static void help() {
 	puts("exit      : exit the shell\n");
 }
 
-int main(int argc) {
+int main(char *argv[], int argc) {
 	char cmd[SM_BUFFER];
 	char sn_buf[SM_BUFFER];
 	int return_code;
 	cat("shell_logo");
 	printf("\nargc = %d\n", sn_buf, argc);
-	// for (int i = 0; i < argc; i++)
-	// {
-	// 	sn_printf(sn_buf, "\n%s\n", argv[i]);
-	// 	puts(sn_buf);
-	// }
+	for (int i = 0; i < argc; i++)
+	{
+		sn_printf(sn_buf, "\n%s\n", argv[i]);
+		puts(sn_buf);
+	}
 
 	while (1)
 	{
@@ -46,8 +46,6 @@ int main(int argc) {
 		}
 		// Attempt to run the specified file
 		else {
-			// printf("\nline = %s\n", sn_buf, line);
-			// printf("Je vais executer %s\n", sn_buf, line);
 			return_code = exec(line, NULL, 0);
 			printf("%s exit with code %d\n", sn_buf, line, return_code);
 		}
