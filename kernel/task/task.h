@@ -5,6 +5,7 @@
 #include "tss.h"
 
 #define TASKS_SIZE 8
+#define TASKS_ARGS 8
 
 typedef struct task {
     // TSS of the task
@@ -24,6 +25,8 @@ typedef struct task {
     uint8_t ldt_i;
     int gdt_tss_sel;
     int limit;
+    int argc;
+    char **argv;
     bool is_available;
 } task_t;
 
@@ -31,7 +34,6 @@ extern void task_ltr(uint16_t tss_selector);     // Implemented in task_asm.s
 extern void task_switch(uint16_t tss_selector);  // implemented in task_asm.s
 void init_tasks(int n, int start_i);
 void clean_task(task_t *task);
-
 
 task_t tasks[TASKS_SIZE];
 

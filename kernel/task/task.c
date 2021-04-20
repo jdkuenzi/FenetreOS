@@ -10,18 +10,19 @@ static int ldt_data_idx = 1; // Index of data segment descriptor in the LDT
 
 static void init_task(uint8_t tss_i, uint8_t ldt_i) {
 
+	memset(tasks[task_idx].task_addr_space, 0, sizeof(tasks[task_idx].task_addr_space));
 	tasks[task_idx].is_available = true;
-	
+	tasks[task_idx].argc = 0;
+
 	tasks[task_idx].tss_i = tss_i;
 	tasks[task_idx].ldt_i = ldt_i;
-
 	memset(&tasks[task_idx].task_tss, 0, sizeof(tss_t));
 	// Add the task's TSS and LDT to the GDT
 	gdt[tss_i] = gdt_make_tss(&tasks[task_idx].task_tss, DPL_KERNEL);
 	gdt[ldt_i] = gdt_make_ldt((uint32_t)tasks[task_idx].task_ldt, sizeof(tasks[task_idx].task_ldt) - 1, DPL_KERNEL);
 	int gdt_tss_sel = gdt_entry_to_selector(&gdt[tss_i]);
 	int gdt_ldt_sel = gdt_entry_to_selector(&gdt[ldt_i]);
-	
+
 	tasks[task_idx].gdt_tss_sel = gdt_tss_sel;
 
 	// Define code and data segments in the LDT; both segments are overlapping
@@ -56,7 +57,8 @@ static void init_task(uint8_t tss_i, uint8_t ldt_i) {
 
 void clean_task(task_t *task) {
 	memset(task->task_addr_space, 0, sizeof(task->task_addr_space));
-	
+	task->argc = 0;
+
 	task->task_tss.eip = 0;
 	task->task_tss.esp = task->task_tss.ebp = task->limit; // stack pointers
 

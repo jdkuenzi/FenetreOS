@@ -40,7 +40,7 @@ multiboot_info_t *info;
 void entry(multiboot_info_t* mb_info)
 {	
 	info = mb_info;
-	uint_t RAM_in_KB = info->mem_upper * 1000 / 4096;
+	uint_t RAM_in_KB = info->mem_upper * 1024 / 4096;
 	
 	init_vid(COLOR_GREEN, COLOR_BLACK);
 	my_printf("Init vid OK !\n");
@@ -88,9 +88,9 @@ void entry(multiboot_info_t* mb_info)
 		);
 		mods_addr++;
 	}
-	
-	exec("shell.bin");
-	
+	char *argv[2] = {"shell.bin", "Je suis l'argument"};
+	exec("shell.bin", argv, 2);
+
 	my_printf("\n+-------------------------+\n|    System shutdown !    |\n+-------------------------+\n");
 	halt();
 }

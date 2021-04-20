@@ -8,10 +8,11 @@
 extern  multiboot_info_t* info;
 
 // Return true if the exec was successful or false otherwise.
-bool exec(char *filename) {
-    bool success_flag = false;
+int exec(char *filename, char **argv, int argc) {
+
+    int success_flag = -1;
     bool available_flag = false;
-    task_t *task_ptr; 
+    task_t *task_ptr;
 
     for (int i = 0; i < TASKS_SIZE; i++)
     {
@@ -25,10 +26,24 @@ bool exec(char *filename) {
     if (available_flag) {
         multiboot_module_t addr;
         if (find_file(filename, &addr)) {
+            multiboot_uint32_t size = addr.mod_end - addr.mod_start;
             task_ptr->is_available = false;
             file_read(&addr, (void*)task_ptr->task_addr_space);
+            task_ptr->argv = task_ptr->task_addr_space + size;
+            for (int i = 0; i < argc; i++)
+            {
+                task_ptr->argv[i] = argv[i];
+            }
+            uint8_t *stack = &task_ptr->task_addr_space[1049000];
+            *stack = 5;
+            stack--;
+            *stack = 6;
+            stack--;
+            // *stack = argv;
+            task_ptr->task_tss.esp -= 8;
+            task_ptr->task_tss.esp0 -= 8;
             task_switch(task_ptr->gdt_tss_sel);
-            success_flag = true;
+            success_flag = task_ptr->task_tss.eax;
             clean_task(task_ptr);
         } else {
             char buffer[XL_BUFFER];
@@ -37,6 +52,6 @@ bool exec(char *filename) {
     } else {
         puts_error("Exception : Exec, no task available !", COLOR_LIGHT_RED);
     }
-    
+
     return success_flag;
 }

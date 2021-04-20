@@ -7,16 +7,26 @@ static void help() {
 	puts("exit      : exit the shell\n");
 }
 
-void main() {
+int main(int argc) {
 	char cmd[SM_BUFFER];
 	char sn_buf[SM_BUFFER];
+	int return_code;
 	cat("shell_logo");
-	while (1) {
+	printf("\nargc = %d\n", sn_buf, argc);
+	// for (int i = 0; i < argc; i++)
+	// {
+	// 	sn_printf(sn_buf, "\n%s\n", argv[i]);
+	// 	puts(sn_buf);
+	// }
+
+	while (1)
+	{
 		puts(">");
 		read_string(cmd, SM_BUFFER);
-		char *line = to_lower(trim(cmd));  // remove heading and trailing spaces and convert to lower case
+		char *line = to_lower(trim(cmd)); // remove heading and trailing spaces and convert to lower case
 		puts("\n");
 		if (line[0] == 0) {
+			
 		}
 		else if (strcmp("help", line) == 0) {
 			help();
@@ -31,13 +41,17 @@ void main() {
 		}
 		else if (strcmp("exit", line) == 0) {
 			puts("\nBye.\n");
-			exit();
+			break;
+			// exit();
 		}
 		// Attempt to run the specified file
 		else {
 			// printf("\nline = %s\n", sn_buf, line);
 			// printf("Je vais executer %s\n", sn_buf, line);
-			exec(line);
+			return_code = exec(line, NULL, 0);
+			printf("%s exit with code %d\n", sn_buf, line, return_code);
 		}
 	}
+
+	return 1;
 }

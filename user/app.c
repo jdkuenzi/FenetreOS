@@ -265,7 +265,7 @@ static int get_answer(uint8_t min, uint8_t max) {
 }
 
 // Entry point of a user application
-void main() {
+int main() {
 	// setcursor(0, 0);
 	clean_vid_x_y(0, 0);
 	char buf[LG_BUFFER];
@@ -294,7 +294,7 @@ void main() {
 	if (game_mode == 4) {
 		clean_vid_x_y(0, 0);
 		setcursor(0,1);
-		exit();
+		return 2;
 	}
 
 	while (1)
@@ -359,4 +359,6 @@ void main() {
 	
 	clean_vid_x_y(0, 0);
 	setcursor(0,1);
+
+	return 1;
 }

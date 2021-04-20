@@ -3,6 +3,6 @@
 
 #include "../../common/types.h"
 
-extern bool exec(char *filename);
+extern int exec(char *filename, char **argv, int argc);
 
 #endif
