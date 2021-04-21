@@ -1,44 +1,45 @@
 #include "ulibc.h"
 
 static void help() {
-	puts("PROG      : execute program PROG\n");
-	puts("cat FILE  : dump contents of FILE\n");
-	puts("sleep N   : sleep for N milliseconds\n");
-	puts("exit      : exit the shell\n");
+	puts("PROG arg1 arg2 ...  : execute program PROG with arguments if needed\n");
+	puts("cat FILE            : dump contents of FILE\n");
+	puts("sleep N             : sleep for N milliseconds\n");
+	puts("argv                : display the arguments\n");
+	puts("exit                : exit the shell\n");
 }
 
-int main(char *argv[], int argc) {
+static void display_argv(char *argv[], int argc) {
+	char sn_buf[SM_BUFFER];
+	printf("+-- argc = %d --+\n", sn_buf, argc);
+	for (int i = 0; i < argc; i++)
+	{
+		printf("	argv[%d] = %s\n", sn_buf, i, argv[i]);
+	}
+}
+
+int main(char *argv[], int argc)
+{
 	char cmd[SM_BUFFER];
 	char sn_buf[SM_BUFFER];
 	char *local_argv[ARGV_BUFFER];
 	int local_argc;
 	int return_code;
 	cat("shell_logo");
-	printf("\nargc = %d\n", sn_buf, argc);
-	for (int i = 0; i < argc; i++)
-	{
-		sn_printf(sn_buf, "\n%s\n", argv[i]);
-		puts(sn_buf);
-	}
 
 	while (1)
 	{
 		puts(">");
 		read_string(cmd, SM_BUFFER);
-		char *line = to_lower(trim(cmd)); // remove heading and trailing spaces and convert to lower case
+		char *line = trim(cmd); // remove heading and trailing spaces
 		local_argc = 0;
 		while (line)
 		{
 			local_argv[local_argc] = strsep(&line, " ");
 			local_argc++;
 		}
+		to_lower(cmd); // convert to lower case
 
-		// printf("\nlocal_argc = %d\n", sn_buf, local_argc);
-		// for (int i = 0; i < local_argc; i++)
-		// {
-		// 	printf("\nlocal_argv[%d]=%s len=%d\n", sn_buf, i, local_argv[i], strlen(local_argv[i]));
-		// }
-		puts("\n");
+			puts("\n");
 		if (cmd[0] == 0)
 		{
 		}
@@ -57,8 +58,12 @@ int main(char *argv[], int argc) {
 		}
 		else if (strcmp("exit", cmd) == 0) {
 			puts("\nBye.\n");
-			break;
 			// exit();
+			break;
+		}
+		else if (strcmp("argv", cmd) == 0)
+		{
+			display_argv(argv, argc);
 		}
 		// Attempt to run the specified file
 		else {

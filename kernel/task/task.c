@@ -12,7 +12,6 @@ static void init_task(uint8_t tss_i, uint8_t ldt_i) {
 
 	memset(tasks[task_idx].task_addr_space, 0, sizeof(tasks[task_idx].task_addr_space));
 	tasks[task_idx].is_available = true;
-	tasks[task_idx].argc = 0;
 
 	memset(&tasks[task_idx].task_tss, 0, sizeof(tss_t));
 	// Add the task's TSS and LDT to the GDT
@@ -55,8 +54,7 @@ static void init_task(uint8_t tss_i, uint8_t ldt_i) {
 
 void clean_task(task_t *task) {
 	memset(task->task_addr_space, 0, sizeof(task->task_addr_space));
-	task->argc = 0;
-
+	
 	task->task_tss.eip = 0;
 	task->task_tss.esp = task->task_tss.ebp = task->limit; // stack pointers
 

@@ -5,7 +5,8 @@
 #include "tss.h"
 
 #define TASKS_SIZE 8
-#define TASKS_ARGS 10
+#define TASK_ADDR_SPACE 1048576
+#define TASK_KERNEL_STACK 65536
 
 typedef struct task {
     // TSS of the task
@@ -16,15 +17,13 @@ typedef struct task {
 
     // Allocate 1MB of address space for the task.
     // The address space MUST be aligned to 4096 bytes (4KB)!
-    uint8_t task_addr_space[1049000] __attribute__((aligned(4096)));
+    uint8_t task_addr_space[TASK_ADDR_SPACE] __attribute__((aligned(4096)));
 
     // Allocate 64KB of kernel stack for the task
-    uint8_t task_kernel_stack[65536];
+    uint8_t task_kernel_stack[TASK_KERNEL_STACK];
 
     int gdt_tss_sel;
     int limit;
-    int argc;
-    char *argv[TASKS_ARGS];
     bool is_available;
 } task_t;
 

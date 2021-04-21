@@ -170,6 +170,7 @@ void exception_handler(regs_t *regs) {
 	uint32_t task_i = ((regs->tss_selector >> 3) - 4) / 2;
 	task_t *t = &tasks[task_i];
 	t->task_addr_space[0] = 0xCF;
+	regs->eax = -1;
 	regs->eip = 0;
 }
 

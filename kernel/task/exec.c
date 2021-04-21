@@ -29,18 +29,25 @@ int exec(char *filename, char *argv[], int argc) {
             multiboot_uint32_t size = addr.mod_end - addr.mod_start;
             task_ptr->is_available = false;
             file_read(&addr, (void*)task_ptr->task_addr_space);
-            int *stack = (int*)task_ptr->task_addr_space + size;
-            stack = task_ptr->argv;
+            
+            char **task_argv = (char **)task_ptr->task_addr_space + size;
+            char *argv_ptr = (char *)task_argv + ARGV_BUFFER * sizeof(uint32_t);
             for (int i = 0; i < argc; i++)
             {
-                task_ptr->argv[i] = argv[i];
+                uint_t argv_len = strlen(argv[i]) + 1;
+                strncpy(argv_ptr, argv[i], argv_len);
+                task_argv[i] = (char *)(argv_ptr - (char*)task_ptr->task_addr_space);
+                argv_ptr += argv_len;
             }
-            stack = (int*)&task_ptr->task_addr_space[1049000];
-            *stack-- = task_ptr->argv;
-            *stack = argc;
+            
+            uint32_t *stack = (uint32_t *)&task_ptr->task_addr_space[TASK_ADDR_SPACE];
+            *--stack = (uint32_t)argc;
+            *--stack = (uint32_t)task_argv - (uint32_t)task_ptr->task_addr_space;
             task_ptr->task_tss.esp -= 8;
             task_ptr->task_tss.esp0 -= 8;
+            
             task_switch(task_ptr->gdt_tss_sel);
+            
             success_flag = task_ptr->task_tss.eax;
             clean_task(task_ptr);
         } else {

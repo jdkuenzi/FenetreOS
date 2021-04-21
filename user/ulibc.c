@@ -18,7 +18,7 @@ int puts(char *s) {
     return syscall(SYSCALL_PUTS, (uint32_t)s, 0, 0, 0);
 }
 
-int exec(char *filename, char** argv, int argc) {
+int exec(char *filename, char *argv[], int argc) {
 	return syscall(SYSCALL_EXEC, (uint32_t)filename, (uint32_t)argv, argc, 0);
 }
 
@@ -57,6 +57,7 @@ int sleep(uint_t ms) {
 	return syscall(SYSCALL_SLEEP, (uint32_t)ms, 0, 0, 0);
 }
 
-void exit() {
+void exit()
+{
 	asm("iret");
 }

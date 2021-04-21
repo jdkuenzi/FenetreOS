@@ -265,7 +265,8 @@ static int get_answer(uint8_t min, uint8_t max) {
 }
 
 // Entry point of a user application
-int main() {
+int main(char *argv[], int argc)
+{
 	// setcursor(0, 0);
 	clean_vid_x_y(0, 0);
 	char buf[LG_BUFFER];

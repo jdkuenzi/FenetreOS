@@ -21,7 +21,12 @@ static int syscall_getc(uint32_t arg1, uint32_t arg2, uint32_t arg3, uint32_t ar
 
 static int syscall_exec(uint32_t arg1, uint32_t arg2, uint32_t arg3, uint32_t arg4, uint32_t base) {
 	UNUSED(arg4);
-	return exec((char*)(base + arg1), (char**)(base + arg2), arg3);
+	char **argv = (char **)(base + arg2);
+	for (int i = 0; i < arg3; i++)
+	{
+		argv[i] = (char *)(base + argv[i]);
+	}
+	return exec((char *)(base + arg1), argv, arg3);
 }
 
 static int syscall_set_cursor(uint32_t arg1, uint32_t arg2, uint32_t arg3, uint32_t arg4, uint32_t base) {

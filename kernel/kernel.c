@@ -77,19 +77,22 @@ void entry(multiboot_info_t* mb_info)
 
 	// Print of modules infos
 	multiboot_module_t *mods_addr = (multiboot_module_t*)info->mods_addr;
-	for (multiboot_uint32_t i = 0; i < info->mods_count; i++) {
+	for (multiboot_uint32_t i = 0; i < info->mods_count; i++)
+	{
 		file_stat(mods_addr, &st);
+		// strncpy(argv[i], st.filename, strlen(st.filename) + 1);
 		my_printf(
-			"\t- M%d    : addr=%x, size=%d [B] cmdline=%s\n", 
-			i, 
+			"\t- M%d    : addr=%x, size=%d [B] cmdline=%s\n",
+			i,
 			mods_addr->mod_start,
 			st.size,
-			st.filename
-		);
+			st.filename);
 		mods_addr++;
 	}
-	char *argv[2] = {"shell.bin", "Je suis l'argument"};
-	exec("shell.bin", argv, 2);
+
+	int argc = 1;
+	char *argv[1] = { "shell.bin" };
+	exec("shell.bin", argv, argc);
 
 	my_printf("\n+-------------------------+\n|    System shutdown !    |\n+-------------------------+\n");
 	halt();
