@@ -10,7 +10,6 @@
  */
 
 #include "file_system.h"
-#include "../../common/lib/string.h"
 
 extern multiboot_info_t *info;
 
@@ -21,12 +20,14 @@ extern multiboot_info_t *info;
  * 
  * @return true if find else false
  */
-bool find_file(char *filename, multiboot_module_t *addr) {
+bool find_file(char *filename, multiboot_module_t *addr)
+{
     bool file_found_flag = false;
-    multiboot_module_t *mods_addr = (multiboot_module_t*)info->mods_addr;
+    multiboot_module_t *mods_addr = (multiboot_module_t *)info->mods_addr;
     for (multiboot_uint32_t i = 0; i < info->mods_count; i++, mods_addr++)
     {
-        if (strcmp((char*)mods_addr->cmdline, filename) == 0) {
+        if (strcmp((char *)mods_addr->cmdline, filename) == 0)
+        {
             file_found_flag = true;
             *addr = *mods_addr;
             break;
@@ -41,9 +42,10 @@ bool find_file(char *filename, multiboot_module_t *addr) {
  * @param addr information of the file
  * @param buf write buffer 
  */
-void file_read(multiboot_module_t *addr, void *buf) {
+void file_read(multiboot_module_t *addr, void *buf)
+{
     multiboot_uint32_t size = addr->mod_end - addr->mod_start;
-    memcpy(buf, (void*)addr->mod_start, size);
+    memcpy(buf, (void *)addr->mod_start, size);
 }
 
 /**
@@ -51,9 +53,29 @@ void file_read(multiboot_module_t *addr, void *buf) {
  * @param addr information of the file
  * @param stat structure where we will copy the information
  */
-void file_stat(multiboot_module_t *addr, stat_t *stat) {
+void file_stat(multiboot_module_t *addr, stat_t *stat)
+{
     multiboot_uint32_t size = addr->mod_end - addr->mod_start;
-    char *filename = (char*)addr->cmdline;
+    char *filename = (char *)addr->cmdline;
     stat->size = size;
-    memcpy(stat->filename, filename, strlen(filename) + 1);
+    memcpy(stat->filename, filename, (strlen(filename) + 1) * sizeof(char));
+}
+
+void ls()
+{
+    stat_t st;
+    my_printf("%d module(s) loaded\n", info->mods_count);
+    multiboot_module_t *mods_addr = (multiboot_module_t *)info->mods_addr;
+    for (multiboot_uint32_t i = 0; i < info->mods_count; i++)
+    {
+        file_stat(mods_addr, &st);
+        // strncpy(argv[i], st.filename, strlen(st.filename) + 1);
+        my_printf(
+            "\t- M%d    : addr=%x, size=%d [B] cmdline=%s\n",
+            i,
+            mods_addr->mod_start,
+            st.size,
+            st.filename);
+        mods_addr++;
+    }
 }

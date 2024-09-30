@@ -6,12 +6,17 @@
 #include "../common/lib/string.h"
 #include "../common/lib/utils.h"
 
-#define printf(fmt, buffer, ...) sn_printf(buffer, fmt, ##__VA_ARGS__); puts(buffer)
+#define printf(fmt, buffer, ...)           \
+    sn_printf(buffer, fmt, ##__VA_ARGS__); \
+    puts(buffer)
 
 int setcursor(uint32_t x, uint32_t y);
+int enable_cursor();
+int disable_cursor();
 int puts(char *s);
 int clean_vid_x_y(uint32_t x, uint32_t y);
 int puts_x_y(char *s, uint32_t x, uint32_t y);
+int ls();
 int exec(char *filename, char *argv[], int argc);
 char getc();
 int read_string(char *buf, uint16_t size);

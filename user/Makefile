@@ -1,7 +1,8 @@
 include ../common.mk
 
 LD_FLAGS=-T app.ld -lgcc -static
-APP=../res/app.bin
+APP=../res/puissance4.bin
+APP2=../res/gameoflife.bin
 MY_SHELL=../res/shell.bin
 
 C_SRC:=$(shell find . -name "*.c")
@@ -13,12 +14,15 @@ ASM_OBJ:=$(ASM_SRC:.s=.o)
 
 LIB_OBJ:=$(shell find ../common -name "*.o")
 
-all: $(APP) $(MY_SHELL)
+all: $(APP) $(APP2) $(MY_SHELL)
 
 $(MY_SHELL): shell.o ulibc.o $(ASM_OBJ) $(LIB_OBJ)
 	$(CC) $(LD_FLAGS) $^ -o $@
 
 $(APP): app.o ulibc.o $(ASM_OBJ) $(LIB_OBJ)
+	$(CC) $(LD_FLAGS) $^ -o $@
+
+$(APP2): app2.o ulibc.o $(ASM_OBJ) $(LIB_OBJ)
 	$(CC) $(LD_FLAGS) $^ -o $@
 
 %.o: %.c

@@ -1,7 +1,8 @@
 #ifndef _SYSCALL_NB_COMMON_H_
 #define _SYSCALL_NB_COMMON_H_
 
-typedef enum { 
+typedef enum
+{
     SYSCALL_GETC = 0,
     SYSCALL_EXEC = 1,
     SYSCALL_SET_CUSRSOR = 2,
@@ -13,6 +14,9 @@ typedef enum {
     SYSCALL_RANDOM = 8,
     SYSCALL_PUTS_X_Y = 9,
     SYSCALL_CLEAN_X_Y = 10,
+    SYSCALL_LS = 11,
+    SYSCALL_ENABLE_CURSOR = 12,
+    SYSCALL_DISABLE_CURSOR = 13,
     __SYSCALL_END__
 } syscall_t;
 

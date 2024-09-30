@@ -14,8 +14,8 @@ typedef int int32_t;
 #ifndef _STDBOOL_H
 typedef unsigned char bool;
 
-#define true   1
-#define false  0
+#define true 1
+#define false 0
 #endif
 
 typedef unsigned char uchar_t;
@@ -28,12 +28,14 @@ typedef unsigned long long ulong_t;
 #endif
 
 #define FILE_SYSTEM_BUFFER_SIZE 50
-typedef struct stat {
+typedef struct stat
+{
     char filename[FILE_SYSTEM_BUFFER_SIZE];
     uint32_t size;
 } stat_t;
 
 #define ARGV_BUFFER 10
+#define XXS_BUFFER 32
 #define XS_BUFFER 64
 #define SM_BUFFER 128
 #define MD_BUFFER 256

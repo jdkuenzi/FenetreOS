@@ -21,7 +21,8 @@
  * @param count number of bytes to fill
  * @return pointer to the destination
  */
-void *memset(void *dst, int value, uint_t count) {
+void *memset(void *dst, int value, uint_t count)
+{
 	char *d = dst;
 	while (count--)
 	{
@@ -37,7 +38,8 @@ void *memset(void *dst, int value, uint_t count) {
  * @param count number of bytes that needs to be copied
  * @return pointer to the destination zone
  */
-void *memcpy(void *dst, void *src, uint_t count) {
+void *memcpy(void *dst, void *src, uint_t count)
+{
 	char *copySrc = src;
 	char *copyDst = dst;
 	while (count--)
@@ -54,9 +56,11 @@ void *memcpy(void *dst, void *src, uint_t count) {
  * @param count number of bytes that have to be copied
  * @return pointer to the destination zone
  */
-char *strncpy(char *dest, const char *src, uint_t count) {
+char *strncpy(char *dest, const char *src, uint_t count)
+{
 	char *tmp = dest;
-	while (count) {
+	while (count)
+	{
 		if ((*tmp = *src) != 0)
 			src++;
 		tmp++;
@@ -71,9 +75,11 @@ char *strncpy(char *dest, const char *src, uint_t count) {
  * @param q second string
  * @return int 0 if equal, -1 if first < second, 1 if first > second
  */
-int strcmp(const char *p, const char *q) {
+int strcmp(const char *p, const char *q)
+{
 	unsigned char c1, c2;
-	while (1) {
+	while (1)
+	{
 		c1 = *p++;
 		c2 = *q++;
 		if (c1 != c2)
@@ -91,9 +97,11 @@ int strcmp(const char *p, const char *q) {
  * @param count number of bytes
  * @return int 0 if equal, -1 if first < second, 1 if first > second
  */
-int strncmp(const char *p, const char *q, uint_t count) {
+int strncmp(const char *p, const char *q, uint_t count)
+{
 	unsigned char c1, c2;
-	while (count) {
+	while (count)
+	{
 		c1 = *p++;
 		c2 = *q++;
 		if (c1 != c2)
@@ -110,7 +118,8 @@ int strncmp(const char *p, const char *q, uint_t count) {
  * @dest: The string to be appended to
  * @src: The string to append to it
  */
-char *strcat(char *dest, const char *src) {
+char *strcat(char *dest, const char *src)
+{
 	char *tmp = dest;
 	while (*dest)
 		dest++;
@@ -169,7 +178,8 @@ char *strsep(char **s, const char *ct)
  * @param q string to compare
  * @return int 0 if equal, -1 if first < second, 1 if first > second
  */
-bool start_with(const char *p, const char *q) {
+bool start_with(const char *p, const char *q)
+{
 	return (strncmp(p, q, strlen(p)) == 0);
 }
 
@@ -178,23 +188,29 @@ bool start_with(const char *p, const char *q) {
  * @param s string to trim
  * @return s
  */
-char *trim(char *s) {
+char *trim(char *s)
+{
 	char *start = s;
 	char *end = s + strlen(s) - 1;
 
-	while(*start == ASCII_SPACE) { 
-		if (start >= end) {
-			memset(s, '\0', strlen(s));
+	while (*start == ASCII_SPACE)
+	{
+		if (start >= end)
+		{
+			memset(s, '\0', strlen(s) * sizeof(char));
 			return s;
 		}
 		start++;
 	}
 
-	while(*end == ASCII_SPACE) { end--; }
+	while (*end == ASCII_SPACE)
+	{
+		end--;
+	}
 
 	uint_t size = end - start + 1;
 
-	memcpy(s, start, size);
+	memcpy(s, start, (size + 1) * sizeof(char));
 	s[size] = '\0';
 	return s;
 }
@@ -204,12 +220,14 @@ char *trim(char *s) {
  * @param s string to lower
  * @return s
  */
-char *to_lower(char *s) {
+char *to_lower(char *s)
+{
 	char *ptr = s;
 	while (*ptr)
 	{
-		if (*ptr >= ASCII_A && *ptr <= ASCII_Z) {
-			*ptr = *ptr + ASCII_TO_LOWER; 
+		if (*ptr >= ASCII_A && *ptr <= ASCII_Z)
+		{
+			*ptr = *ptr + ASCII_TO_LOWER;
 		}
 		ptr++;
 	}
@@ -221,7 +239,8 @@ char *to_lower(char *s) {
  * @param s string for count
  * @return int length of the string
  */
-int strlen(const char *s) {
+int strlen(const char *s)
+{
 	const char *sc;
 	for (sc = s; *sc != '\0'; ++sc)
 		/* nothing */;

@@ -16,7 +16,9 @@
 #include "../../common/types.h"
 #include "../../common/lib/utils.h"
 
-#define eprintf(fmt, color, buffer, ...) sn_printf(buffer, fmt, ##__VA_ARGS__); puts_error(buffer, color)
+#define eprintf(fmt, color, buffer, ...)   \
+    sn_printf(buffer, fmt, ##__VA_ARGS__); \
+    puts_error(buffer, color)
 
 void printChar(char c);
 void my_printf(const char *fmt, ...);
